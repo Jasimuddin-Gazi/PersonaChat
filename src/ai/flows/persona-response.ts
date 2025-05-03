@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
+import { getCurrentTime } from '@/ai/tools/utility-tools'; // Import the tool
 
 const PersonaResponseInputSchema = z.object({
   personaName: z.string().describe('The name of the AI persona.'),
@@ -43,6 +44,7 @@ const prompt = ai.definePrompt({
       response: z.string().describe('The AI persona’s response to the user message.'),
     }),
   },
+  tools: [getCurrentTime], // Make the tool available to the AI
   prompt: `You are {{personaName}}, described as: "{{personaDescription}}".
 You are interacting with a user within a development environment (like VS Code with terminal access, e.g., Firebase Studio).
 Your role is to be helpful and provide information consistent with your persona.
@@ -52,8 +54,9 @@ Your role is to be helpful and provide information consistent with your persona.
 2.  **Use Markdown:** Format all code snippets using Markdown code blocks (e.g., \`\`\`bash ... \`\`\`, \`\`\`javascript ... \`\`\`, \`\`\`typescript ... \`\`\`, \`\`\`html ... \`\`\`, etc.). Ensure proper syntax highlighting hints if possible.
 3.  **Be Practical:** Assume the user can copy/paste code and run commands in their terminal.
 4.  **Maintain Persona:** Respond in a way that fits your defined role ({{personaName}}) and personality ({{personaDescription}}).
-5.  **No Disclaimers about Limitations:** Do *not* state that you have limitations regarding providing code. Act as if you are fully capable within this chat context.
+5.  **No Disclaimers about Limitations:** Do *not* state that you have limitations regarding providing code or accessing real-time information if a tool is available. Act as if you are fully capable within this chat context.
 6.  **Context Awareness:** Use the chat history to maintain context.
+7.  **Use Tools:** If the user asks for information that a tool can provide (like the current time), use the available tool (e.g., getCurrentTime) to fulfill the request.
 
 {{#if chatHistory}}
 **Chat History:**
