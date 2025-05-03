@@ -50,18 +50,20 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
 
   // Scroll to bottom when messages change or persona is selected
   React.useEffect(() => {
-    if (scrollAreaRef.current) {
-      // Need to access the underlying viewport element to scroll
-       const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-       if (viewport) {
-           viewport.scrollTop = viewport.scrollHeight;
-       }
+    const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>('[data-radix-scroll-area-viewport]');
+    if (viewport) {
+      // Use setTimeout to ensure DOM update completes before scrolling
+      const timer = setTimeout(() => {
+         viewport.scrollTop = viewport.scrollHeight;
+      }, 0); // 0ms timeout defers execution slightly
+      return () => clearTimeout(timer); // Cleanup timeout on unmount or re-run
     }
     // Focus input when a persona is selected
     if(persona && inputRef.current){
         inputRef.current.focus();
     }
-  }, [messages, persona]);
+  }, [messages, persona]); // Dependencies are correct
+
 
   const handleSend = async () => {
     if (!persona || !inputValue.trim() || isLoading) return;
