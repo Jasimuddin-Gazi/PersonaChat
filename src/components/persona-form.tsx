@@ -88,7 +88,7 @@ export function PersonaForm({ onPersonaCreated }: PersonaFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 animate-fade-in"> {/* Added animation */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 animate-fade-in">
         <FormField
           control={form.control}
           name="description"
@@ -98,13 +98,14 @@ export function PersonaForm({ onPersonaCreated }: PersonaFormProps) {
               <FormControl>
                 <Textarea
                   placeholder="Describe the AI persona OR the Dream Scenario (e.g., 'A council of philosophers discussing ethics', 'A helpful coding assistant specializing in Python...')"
-                  className="resize-none transition-shadow duration-200 focus:shadow-md" // Added transition
+                  className="resize-none transition-shadow duration-200 focus:shadow-md bg-background/80" // Slight transparency
                   {...field}
                   disabled={isSubmitting}
+                  rows={4} // Increased rows
                 />
               </FormControl>
               <FormDescription>
-                For personas: role, personality, skills. For Dream Scenarios: the scene and characters.
+                Be descriptive! This shapes the AI's personality and knowledge.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -115,28 +116,28 @@ export function PersonaForm({ onPersonaCreated }: PersonaFormProps) {
           control={form.control}
           name="isDreamScenario"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm hover:shadow-md transition-shadow duration-200"> {/* Added transition */}
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-border/50 p-4 shadow-sm hover:shadow-md transition-shadow duration-200 bg-card/80 backdrop-blur-sm"> {/* Lighter border, slight blur */}
                <FormControl>
                  <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   disabled={isSubmitting}
-                  className="transition-colors duration-200" // Added transition
+                  className="transition-colors duration-200 mt-1" // Align checkbox
                  />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="flex items-center gap-1.5">
-                    <Sparkles size={16} className="text-accent"/> {/* Use accent color */} Dream Scenario Mode
+                <FormLabel className="flex items-center gap-1.5 font-semibold">
+                    <Sparkles size={16} className="text-secondary"/> {/* Use secondary color */} Dream Scenario Mode
                 </FormLabel>
                 <FormDescription>
-                  Check this to create a chatroom with simulated characters based on your description.
+                  Simulate a chatroom with multiple characters based on your description.
                 </FormDescription>
               </div>
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting} className="w-full transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"> {/* Added animation */}
+        <Button type="submit" disabled={isSubmitting} className="w-full button-fancy"> {/* Apply fancy button style */}
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

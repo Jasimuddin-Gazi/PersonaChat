@@ -54,7 +54,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
     if (viewport) {
       const timer = setTimeout(() => {
          viewport.scrollTop = viewport.scrollHeight;
-      }, 100); // Increased timeout slightly for animation settling
+      }, 150); // Slightly longer timeout for potentially complex animations
       return () => clearTimeout(timer);
     }
     if(persona && inputRef.current){
@@ -94,10 +94,10 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
 
    if (!persona) {
     return (
-      <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground p-8 animate-fade-in"> {/* Added animation */}
-        <Bot size={48} className="mb-4 text-primary animate-pulse"/> {/* Pulse animation */}
-        <p className="text-lg">Select a persona to start chatting</p>
-        <p className="text-sm">Or create a new persona using the form.</p>
+      <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground p-8 animate-fade-in">
+        <Bot size={64} className="mb-6 text-primary animate-float"/> {/* Bigger icon, float animation */}
+        <p className="text-xl font-semibold">Select a Persona</p>
+        <p className="text-sm mt-1">Choose a persona from the list or create a new one to begin chatting!</p>
       </div>
     );
   }
@@ -105,27 +105,26 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
 
   return (
     <TooltipProvider>
-        <div className="flex h-full flex-col bg-background"> {/* Ensure background */}
-         <div className="flex items-center justify-between p-4 border-b bg-card"> {/* Apply card styles */}
+        <div className="flex h-full flex-col bg-gradient-animation"> {/* Apply gradient animation */}
+         <div className="flex items-center justify-between p-4 border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10 shadow-md"> {/* Blurred background + sticky */}
           <div className="flex items-center gap-3">
              <Tooltip>
                <TooltipTrigger asChild>
                  <Avatar className={cn(
-                    "h-10 w-10 border transition-transform duration-300 hover:scale-110",
-                    persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                    "h-10 w-10 border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg", // Added hover shadow
+                    persona.isDreamScenario ? 'border-secondary' : 'border-primary' // Use secondary for dream scenario
                  )}>
                    <AvatarFallback className={cn(
-                     persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                     "font-semibold",
+                     persona.isDreamScenario ? 'text-secondary' : 'text-primary'
                    )}>
                      {persona.isDreamScenario ? <Sparkles size={20} /> : <Bot size={20} />}
                    </AvatarFallback>
                  </Avatar>
                </TooltipTrigger>
-               {persona.isDreamScenario && (
-                 <TooltipContent>
-                   <p>Dream Scenario</p>
-                 </TooltipContent>
-               )}
+               <TooltipContent side="bottom">
+                   {persona.isDreamScenario ? <p>Dream Scenario Active</p> : <p>Persona: {persona.name}</p>}
+               </TooltipContent>
              </Tooltip>
              <div>
                <h2 className="text-lg font-semibold text-card-foreground">{persona.name}</h2>
@@ -136,8 +135,8 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive transition-colors">
-                <Trash2 className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive transition-colors rounded-full"> {/* Rounded button */}
+                <Trash2 className="h-5 w-5" />
                 <span className="sr-only">Clear Chat</span>
               </Button>
             </AlertDialogTrigger>
@@ -151,7 +150,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 button-fancy" // Apply fancy button style
                   onClick={() => onClearChat(persona.id)}>
                   Clear Chat
                 </AlertDialogAction>
@@ -163,15 +162,17 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
         {/* Chat Messages */}
         <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
           {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground animate-fade-in">
-                  <p>No messages yet. Start the conversation!</p>
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground animate-fade-in-delay"> {/* Added delay */}
+                   <Sparkles size={48} className="mb-4 text-secondary animate-pulse-glow"/> {/* Secondary color, pulse glow */}
+                  <p className="text-lg">Conversation starts here...</p>
+                  <p className="text-sm mt-1">Send a message to {persona.name}.</p>
               </div>
           ) : (
               messages.map((msg) => (
               <div
                   key={msg.id}
                   className={cn(
-                      "flex items-end gap-2 mb-6 chat-message", // Use mb-6 for more space
+                      "flex items-end gap-2 chat-message", // Removed mb-6, handled by chat-message in globals.css
                       msg.sender === 'user' ? 'justify-end user-message' : 'justify-start persona-message'
                   )}
               >
@@ -179,72 +180,67 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                       <Tooltip>
                           <TooltipTrigger asChild>
                               <Avatar className={cn(
-                                  "h-8 w-8 border self-start transition-transform duration-300 hover:scale-110",
-                                   persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                                  "h-8 w-8 border-2 self-start transition-transform duration-300 hover:scale-110",
+                                   persona.isDreamScenario ? 'border-secondary' : 'border-primary' // Use secondary for dream scenario
                                 )}>
                                 <AvatarFallback className={cn(
-                                    persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                                    "font-medium text-xs", // Smaller font
+                                    persona.isDreamScenario ? 'text-secondary' : 'text-primary'
                                 )}>
                                     {persona.isDreamScenario ? <Sparkles size={16} /> : <Bot size={16} />}
                                 </AvatarFallback>
                               </Avatar>
                           </TooltipTrigger>
-                          {persona.isDreamScenario && (
-                              <TooltipContent side="right">
-                                  <p>Scenario Response</p>
-                              </TooltipContent>
-                          )}
+                           <TooltipContent side="right">
+                                  {persona.isDreamScenario ? <p>Scenario Response</p> : <p>{persona.name}</p>}
+                            </TooltipContent>
                       </Tooltip>
                   )}
-                  <div
-                      className={cn(
-                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300 hover:shadow-lg", // Kept shadow
-                        msg.sender === 'user'
-                            ? 'bg-primary/90 text-primary-foreground animate-slide-in-right' // User message: Primary color bg
-                            : 'bg-card text-card-foreground animate-slide-in-left' // Persona message: Card color bg for better contrast
-                      )}
-                  >
+                  <div className="chat-bubble"> {/* Apply bubble class */}
                       <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                      <p className={cn(
-                          "text-xs mt-1",
-                          msg.sender === 'user'
-                            ? 'text-primary-foreground/70 text-right' // User timestamp: Muted primary foreground
-                            : 'text-muted-foreground text-left' // Persona timestamp: Muted foreground
-                        )}>
+                      <p className="chat-timestamp"> {/* Apply timestamp class */}
                           {format(new Date(msg.timestamp), 'p')}
                       </p>
                   </div>
                   {msg.sender === 'user' && (
-                      <Avatar className="h-8 w-8 border self-start transition-transform duration-300 hover:scale-110">
-                          <AvatarFallback><User size={16} /></AvatarFallback>
-                      </Avatar>
+                      <Tooltip>
+                         <TooltipTrigger asChild>
+                            <Avatar className="h-8 w-8 border-2 self-start transition-transform duration-300 hover:scale-110 border-muted-foreground/50"> {/* Muted border */}
+                                <AvatarFallback className="text-muted-foreground"><User size={16} /></AvatarFallback>
+                            </Avatar>
+                         </TooltipTrigger>
+                         <TooltipContent side="left">
+                            <p>You</p>
+                         </TooltipContent>
+                      </Tooltip>
                   )}
               </div>
               ))
           )}
-          {/* Loading indicator shown only when AI is generating a response */}
+          {/* Enhanced Loading indicator */}
           {isLoading && (
               <div className="flex items-end gap-2 justify-start mb-6 animate-fade-in">
                    <Avatar className={cn(
-                      "h-8 w-8 border self-start",
-                      persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                      "h-8 w-8 border-2 self-start",
+                      persona.isDreamScenario ? 'border-secondary' : 'border-primary'
                     )}>
                       <AvatarFallback className={cn(
-                         persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                         "font-medium text-xs",
+                         persona.isDreamScenario ? 'text-secondary' : 'text-primary'
                       )}>
                           {persona.isDreamScenario ? <Sparkles size={16} /> : <Bot size={16} />}
                       </AvatarFallback>
                   </Avatar>
-                  <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-card text-card-foreground"> {/* Use card background for loading */}
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> {/* Muted color for spinner */}
+                  <div className="chat-bubble bg-card text-card-foreground"> {/* Use bubble style */}
+                      <Loader2 className="loading-spinner" /> {/* Use spinner class */}
                   </div>
               </div>
           )}
         </ScrollArea>
 
-        {/* Chat Input */}
-        <Separator />
-        <div className="p-4 bg-card"> {/* Apply card styles */}
+        {/* Chat Input Area */}
+        <Separator className="bg-border/50"/>
+        <div className="chat-input-area"> {/* Apply input area class */}
           <form
               onSubmit={(e) => {
                   e.preventDefault();
@@ -258,13 +254,13 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder={`Message ${persona.name}...`}
-              className="flex-1 transition-shadow duration-200 focus:shadow-md" // Added transition
+              className="flex-1 transition-shadow duration-200 focus:shadow-md rounded-full px-4" // Rounded input
               disabled={isLoading}
               autoComplete="off"
             />
-            <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()} className="transition-transform duration-200 hover:scale-110 active:scale-95"> {/* Added animations */}
+            <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()} className="rounded-full button-fancy"> {/* Rounded button + fancy style */}
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="loading-spinner" />
               ) : (
                 <Send className="h-4 w-4" />
               )}

@@ -34,45 +34,58 @@ type PersonaListProps = {
 export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDeletePersona }: PersonaListProps) {
 
   const handleDeleteClick = (e: React.MouseEvent, personaId: string) => {
-    e.stopPropagation();
-    onDeletePersona(personaId);
+    e.stopPropagation(); // Prevent card selection when clicking delete
+    // Find the persona being deleted to show its name in the confirmation
+    const personaToDelete = personas.find(p => p.id === personaId);
+    if (personaToDelete) {
+        // The AlertDialog will handle the actual deletion call via its action button
+        // This function is now primarily for stopping propagation
+    }
   };
 
   return (
     <ScrollArea className="h-full flex-1">
-       <TooltipProvider>
-          <div className="space-y-4 p-4">
+       <TooltipProvider delayDuration={100}> {/* Shorter delay */}
+          <div className="space-y-3 p-3"> {/* Reduced spacing and padding */}
             {personas.length === 0 && (
-              <p className="text-center text-muted-foreground animate-fade-in">No personas created yet. Create one above!</p> // Added animation
+              <p className="text-center text-muted-foreground p-6 animate-fade-in-delay"> {/* Added delay */}
+                No personas yet. <br/> Create one to start chatting!
+              </p>
             )}
             {personas.map((persona) => (
               <Card
                 key={persona.id}
                 className={cn(
-                  "cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary/50 persona-card", // Added persona-card class and hover effects
-                  selectedPersonaId === persona.id ? 'border-primary ring-2 ring-primary shadow-md' : 'border-border' // Simplified selection style
+                  "cursor-pointer transition-all duration-300 ease-out persona-card border-2 bg-card/80 backdrop-blur-sm", // Use persona-card class, blur effect
+                  selectedPersonaId === persona.id
+                    ? 'border-primary ring-2 ring-primary/50 shadow-lg' // Enhanced selection style
+                    : 'border-transparent hover:border-primary/30' // Transparent base border, subtle hover
                 )}
                 onClick={() => onSelectPersona(persona.id)}
               >
-                <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
+                <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-3"> {/* Reduced padding */}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                       <Avatar className={`h-10 w-10 border transition-transform duration-300 hover:scale-110 ${persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'}`}> {/* Style tweaks */}
-                         <AvatarFallback className={`${persona.isDreamScenario ? 'text-accent' : 'text-primary'}`}>
+                       <Avatar className={cn(
+                           "h-10 w-10 border-2 transition-transform duration-300 hover:scale-110",
+                           persona.isDreamScenario ? 'border-secondary' : 'border-primary' // Use secondary for dream
+                         )}>
+                         <AvatarFallback className={cn(
+                            "font-semibold",
+                            persona.isDreamScenario ? 'text-secondary' : 'text-primary'
+                          )}>
                            {persona.isDreamScenario ? <Sparkles size={20} /> : <Bot size={20} />}
                          </AvatarFallback>
                        </Avatar>
                     </TooltipTrigger>
-                    {persona.isDreamScenario && (
-                      <TooltipContent>
-                        <p>Dream Scenario</p>
-                      </TooltipContent>
-                    )}
+                    <TooltipContent side="right">
+                      {persona.isDreamScenario ? <p>Dream Scenario</p> : <p>Persona</p>}
+                    </TooltipContent>
                   </Tooltip>
 
-                  <div className="grid gap-1 flex-1">
-                    <CardTitle className="text-card-foreground">{persona.name}</CardTitle> {/* Ensure foreground color */}
-                    <CardDescription className="line-clamp-2 text-muted-foreground"> {/* Ensure muted foreground color */}
+                  <div className="grid gap-0.5 flex-1"> {/* Reduced gap */}
+                    <CardTitle className="text-card-foreground text-base font-semibold line-clamp-1">{persona.name}</CardTitle> {/* Adjusted size/weight */}
+                    <CardDescription className="line-clamp-1 text-muted-foreground text-xs"> {/* Adjusted size */}
                         {persona.isDreamScenario ? persona.skills : persona.greeting}
                     </CardDescription>
                   </div>
@@ -81,8 +94,8 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                        <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors" // Added transition
-                          onClick={(e) => e.stopPropagation()}
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors rounded-full opacity-70 hover:opacity-100" // Smaller, rounded, opacity transition
+                          onClick={(e) => e.stopPropagation()} // Stop propagation here too
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete Persona</span>
@@ -90,25 +103,28 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>Delete "{persona.name}"?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete "{persona.name}" and all associated chat history.
+                          This action cannot be undone. All chat history associated with this persona will be permanently lost.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={(e) => handleDeleteClick(e, persona.id)}>
-                          Delete
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 button-fancy" // Apply fancy button style
+                          onClick={() => onDeletePersona(persona.id)}> {/* Actual delete call */}
+                          Delete Permanently
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                 </CardHeader>
-                <CardFooter className="text-xs text-muted-foreground pt-2">
-                  Created {formatDistanceToNow(new Date(persona.createdAt), { addSuffix: true })} {/* Ensure Date object */}
+                {/* Removed Footer for cleaner look, creation time might not be essential */}
+                {/*
+                <CardFooter className="text-xs text-muted-foreground pt-2 pb-3 px-3">
+                  Created {formatDistanceToNow(new Date(persona.createdAt), { addSuffix: true })}
                 </CardFooter>
+                */}
               </Card>
             ))}
           </div>

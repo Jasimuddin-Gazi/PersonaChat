@@ -4,213 +4,312 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Inter', sans-serif; /* Changed font */
-  @apply transition-colors duration-300 ease-in-out; /* Smooth theme transitions */
+  font-family: 'Inter', sans-serif; /* Consistent font */
+  @apply transition-colors duration-500 ease-in-out; /* Slightly longer theme transitions */
 }
 
 @layer base {
   :root {
-    /* Modern Serenity Light Theme - Adjusted for Harmony with Dark Theme */
-    --background: 210 40% 98%;   /* #f8f9fa - Very light cool gray */
-    --foreground: 222 47% 11%;   /* #111827 - Dark charcoal */
+    /* --- Vibrant Day Theme (Light) --- */
+    --background: 0 0% 100%; /* #ffffff - Pure White */
+    --foreground: 224 71% 4%; /* #090f1a - Very Dark Blue */
 
-    --card: 0 0% 100%;         /* #ffffff - Pure white */
-    --card-foreground: 222 47% 11%; /* #111827 */
+    --card: 210 40% 98%; /* #f8f9fa - Very Light Cool Gray */
+    --card-foreground: 224 71% 4%; /* #090f1a */
 
-    --popover: 0 0% 100%;        /* #ffffff */
-    --popover-foreground: 222 47% 11%; /* #111827 */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 224 71% 4%; /* #090f1a */
 
-    /* Adjusted Primary/Secondary to slightly echo dark theme's vibrancy */
-    --primary: 198 88% 58%;   /* #3bc9f0 - Lighter Electric Sky Blue */
-    --primary-foreground: 0 0% 100%; /* #ffffff - White text on primary */
+    /* Vibrant Accents */
+    --primary: 250 70% 60%; /* #7f6aff - Vibrant Lavender */
+    --primary-foreground: 0 0% 100%; /* #ffffff */
 
-    --secondary: 310 75% 60%; /* #d946ef - Lighter Vivid Orchid/Fuchsia */
+    --secondary: 330 80% 60%; /* #f472b6 - Bright Pink */
     --secondary-foreground: 0 0% 100%; /* #ffffff */
 
-    --muted: 216 34% 91%;   /* #e5e7eb - Soft gray */
-    --muted-foreground: 215 25% 63%; /* #8892a1 - Muted slate gray */
+    --muted: 220 14% 96%; /* #f1f3f5 - Slightly Off-white */
+    --muted-foreground: 220 9% 46%; /* #6c757d - Slate Gray */
 
-    /* Accent derived from primary */
-    --accent: 198 88% 90%;   /* #cceeff - Very Light Blue */
-    --accent-foreground: 198 88% 20%; /* #0a3d4c - Dark Blue text on accent */
+    --accent: 250 70% 95%; /* #e9e7ff - Very Light Lavender */
+    --accent-foreground: 250 70% 30%; /* #3d33a3 - Dark Lavender */
 
     --destructive: 0 84% 60%; /* #ef4444 - Vivid Red */
     --destructive-foreground: 0 0% 100%; /* #ffffff */
 
-    --border: 214 20% 89%;   /* #dde1e6 - Slightly softer gray border */
-    --input: 214 32% 91%;   /* #e1e6ec - Light gray input border */
-    --ring: 198 88% 58%;   /* #3bc9f0 - Primary color for focus rings */
+    --border: 220 13% 91%; /* #e4e7eb - Soft Gray Border */
+    --input: 220 13% 88%; /* #dfe2e7 - Slightly Darker Input Border */
+    --ring: 250 70% 60%; /* #7f6aff - Primary color for focus rings */
 
-    --chart-1: 198 88% 58%; /* Primary */
-    --chart-2: 310 75% 60%; /* Secondary */
-    --chart-3: 136 77% 72%; /* Soft Mint Green */
+    --chart-1: 250 70% 60%; /* Primary */
+    --chart-2: 330 80% 60%; /* Secondary */
+    --chart-3: 160 70% 50%; /* Teal */
     --chart-4: 45 96% 56%;  /* Amber Gold */
-    --chart-5: 215 25% 63%; /* Muted Slate Gray */
+    --chart-5: 220 9% 46%; /* Muted Slate Gray */
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* Slightly larger radius */
 
-    /* Sidebar Light - derived from Adjusted Modern Serenity */
-    --sidebar-background: 222 47% 11%; /* #111827 - Charcoal */
-    --sidebar-foreground: 216 34% 91%; /* #e5e7eb - Soft Gray text */
-    --sidebar-primary: 198 88% 58%;   /* #3bc9f0 - Light Blue */
+    /* Sidebar Light - derived from Vibrant Day */
+    --sidebar-background: 224 71% 4%; /* #090f1a - Dark Blue */
+    --sidebar-foreground: 220 14% 90%; /* #e1e4e8 - Light Gray Text */
+    --sidebar-primary: 250 70% 60%;   /* #7f6aff - Lavender */
     --sidebar-primary-foreground: 0 0% 100%; /* #FFFFFF */
-    --sidebar-accent: 222 47% 25%;   /* #2f3a4f - Darker Charcoal hover */
+    --sidebar-accent: 224 71% 15%;   /* #1a233b - Darker Blue hover */
     --sidebar-accent-foreground: 0 0% 100%; /* #FFFFFF */
-    --sidebar-border: 222 47% 20%;   /* #242c3b - Darker gray border */
-    --sidebar-ring: 198 88% 58%;   /* #3bc9f0 */
+    --sidebar-border: 224 71% 10%;   /* #111727 - Very Dark Blue Border */
+    --sidebar-ring: 250 70% 60%;   /* #7f6aff */
   }
 
   .dark {
-    /* Neo Aurora Dark Theme (Re-applied) */
-    --background: 240 6% 6%; /* #0e0e10 */
-    --foreground: 216 14% 84%; /* #d1d5db - Body Text */
+    /* --- Electric Night Theme (Dark) --- */
+    --background: 228 12% 6%; /* #0c0d10 - Deep Navy */
+    --foreground: 210 20% 90%; /* #e1e7f0 - Light Steel Blue Text */
 
-    --card: 0 0% 7%; /* #121212 - Card Background */
-    --card-foreground: 216 14% 84%; /* #d1d5db */
+    --card: 228 12% 9%; /* #111217 - Slightly Lighter Navy */
+    --card-foreground: 210 20% 90%; /* #e1e7f0 */
 
-    --popover: 0 0% 7%; /* #121212 - Popover Background */
-    --popover-foreground: 216 14% 84%; /* #d1d5db */
+    --popover: 228 12% 9%; /* #111217 */
+    --popover-foreground: 210 20% 90%; /* #e1e7f0 */
 
-    --primary: 197 88% 62%; /* #4cc9f0 - Electric Sky Blue */
-    --primary-foreground: 240 6% 6%; /* #0e0e10 - Dark text for primary */
+    /* Neon Accents */
+    --primary: 250 85% 70%; /* #a399ff - Bright Neon Lavender */
+    --primary-foreground: 228 12% 10%; /* #13141a - Dark Text on Primary */
 
-    --secondary: 309 77% 50%; /* #c41fb1 - Vivid Orchid Adjusted */
-    --secondary-foreground: 0 0% 100%; /* White for secondary button text */
+    --secondary: 330 100% 70%; /* #ff66c4 - Electric Pink */
+    --secondary-foreground: 228 12% 10%; /* #13141a */
 
-    --muted: 240 4% 13%; /* #1f1f23 - Muted background derived */
-    --muted-foreground: 215 9% 65%; /* #9ca3af - Slate Gray */
+    --muted: 228 12% 15%; /* #1f2129 - Muted Navy */
+    --muted-foreground: 210 15% 65%; /* #98a2b3 - Grayish Blue */
 
-    --accent: 309 77% 25%; /* #5d0e53 - Darker Orchid for accent bg */
-    --accent-foreground: 309 77% 85%; /* #f5c8ef - Lighter Orchid text */
+    --accent: 250 85% 20%; /* #291f66 - Deep Purple */
+    --accent-foreground: 250 85% 85%; /* #d4d0ff - Light Lavender Text */
 
-    --destructive: 0 100% 71%; /* #ff6b6b - Coral Red */
-    --destructive-foreground: 0 0% 100%; /* White text for destructive */
+    --destructive: 0 100% 75%; /* #ff8080 - Bright Coral Red */
+    --destructive-foreground: 0 0% 10%; /* #1a1a1a */
 
-    --border: 240 4% 18%; /* #2e2e33 - Derived border */
-    --input: 240 4% 15%; /* #26262a - Derived input */
-    --ring: 197 88% 62%; /* #4cc9f0 - Primary Accent for focus rings */
+    --border: 228 12% 20%; /* #2c2f3a - Navy Border */
+    --input: 228 12% 18%; /* #262830 - Darker Input */
+    --ring: 250 85% 70%; /* #a399ff - Primary color for focus rings */
 
-    --chart-1: 197 88% 62%; /* Electric Sky Blue */
-    --chart-2: 309 77% 50%; /* Vivid Orchid */
-    --chart-3: 136 77% 72%; /* Soft Mint Green (#80ed99) */
-    --chart-4: 45 96% 56%; /* Amber Gold (#fbbf24) */
-    --chart-5: 215 9% 65%; /* Slate Gray */
+    --chart-1: 250 85% 70%; /* Primary */
+    --chart-2: 330 100% 70%; /* Secondary */
+    --chart-3: 170 100% 40%; /* Cyan */
+    --chart-4: 50 100% 60%; /* Bright Yellow */
+    --chart-5: 210 15% 65%; /* Grayish Blue */
 
-    /* Sidebar Dark - derived from Neo Aurora */
-    --sidebar-background: 240 6% 4%; /* Even darker */
-    --sidebar-foreground: 215 9% 65%; /* Slate Gray */
-    --sidebar-primary: 197 88% 62%; /* Electric Sky Blue */
-    --sidebar-primary-foreground: 240 6% 6%;
-    --sidebar-accent: 240 4% 13%; /* Muted background for hover */
-    --sidebar-accent-foreground: 197 88% 75%; /* Lighter blue */
-    --sidebar-border: 240 4% 15%;
-    --sidebar-ring: 197 88% 62%;
+    /* Sidebar Dark - derived from Electric Night */
+    --sidebar-background: 228 12% 4%; /* #08080a - Almost Black */
+    --sidebar-foreground: 210 15% 65%; /* #98a2b3 */
+    --sidebar-primary: 250 85% 70%; /* #a399ff */
+    --sidebar-primary-foreground: 228 12% 10%; /* #13141a */
+    --sidebar-accent: 228 12% 12%; /* #17181f - Darker Hover */
+    --sidebar-accent-foreground: 250 85% 80%; /* #bfbbff - Lighter Lavender */
+    --sidebar-border: 228 12% 15%; /* #1f2129 */
+    --sidebar-ring: 250 85% 70%; /* #a399ff */
   }
 }
 
 @layer base {
   * {
-    @apply border-border transition-colors duration-200; /* Subtle border transition */
+    @apply border-border transition-colors duration-300; /* Smooth border transition */
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-/* Add subtle animations */
+/* Enhanced animations & effects */
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+   .animate-fade-in-delay {
+    animation: fadeIn 0.6s ease-out 0.2s forwards; /* Added delay */
+    opacity: 0; /* Start hidden */
   }
   .animate-slide-in-left {
-    animation: slideInLeft 0.5s ease-out;
+    animation: slideInLeft 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
    .animate-slide-in-right {
-    animation: slideInRight 0.5s ease-out;
+    animation: slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
    .animate-pop-in {
-      animation: popIn 0.3s ease-out forwards;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Bouncier pop */
     }
+   .animate-pulse-glow {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+   .animate-float {
+     animation: float 3s infinite ease-in-out;
+   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(5px); } /* Slight upward movement */
+    to { opacity: 1; transform: translateY(0); }
   }
    @keyframes popIn {
-    0% { transform: scale(0.9); opacity: 0; }
-    80% { transform: scale(1.02); opacity: 1; }
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
   @keyframes slideInLeft {
-    from { transform: translateX(-20px); opacity: 0; }
+    from { transform: translateX(-30px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
   }
    @keyframes slideInRight {
-    from { transform: translateX(20px); opacity: 0; }
+    from { transform: translateX(30px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
   }
+   @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 5px 0px hsl(var(--primary) / 0.3); opacity: 0.8; }
+      50% { box-shadow: 0 0 15px 3px hsl(var(--primary) / 0.5); opacity: 1; }
+    }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
 
-  /* Background Gradient Animation */
+
+  /* Enhanced Background Gradient Animation */
   .bg-gradient-animation {
-    background: linear-gradient(270deg, hsl(var(--background)), hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1), hsl(var(--background)));
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    /* Multiple layered gradients for more complexity */
+    background:
+      radial-gradient(ellipse at top left, hsl(var(--primary) / 0.15), transparent 50%),
+      radial-gradient(ellipse at bottom right, hsl(var(--secondary) / 0.15), transparent 50%),
+      linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.8) 50%, hsl(var(--background)) 100%);
+    background-size: 300% 300%, 300% 300%, 100% 100%;
+    animation: gradientBG 25s ease infinite;
+  }
+
+  /* Dark mode specific gradient */
+  .dark .bg-gradient-animation {
+     background:
+      radial-gradient(ellipse at top left, hsl(var(--primary) / 0.2), transparent 60%),
+      radial-gradient(ellipse at bottom right, hsl(var(--secondary) / 0.2), transparent 60%),
+      linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.9) 50%, hsl(var(--background)) 100%);
+    background-size: 300% 300%, 300% 300%, 100% 100%;
+    animation: gradientBG 25s ease infinite;
   }
 
   @keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% { background-position: 0% 50%, 100% 50%, center; }
+    50% { background-position: 100% 50%, 0% 50%, center; }
+    100% { background-position: 0% 50%, 100% 50%, center; }
   }
 }
 
-/* Apply animations to components */
+/* Apply animations/styles to components */
 .persona-card {
-  @apply animate-fade-in;
+  @apply animate-fade-in transition-all duration-300 ease-out;
 }
-.chat-message {
-    @apply animate-pop-in; /* Apply pop-in animation */
+.persona-card:hover {
+   transform: translateY(-3px);
+   box-shadow: 0 8px 20px -5px hsl(var(--primary) / 0.15);
 }
-.chat-message.user-message {
-    /* Optional: specific animation for user */
-}
-.chat-message.persona-message {
-     /* Optional: specific animation for persona */
+.dark .persona-card:hover {
+   box-shadow: 0 8px 25px -5px hsl(var(--primary) / 0.2);
 }
 
-/* Styling for Chat Messages */
-.chat-message > div > div { /* Target the inner div containing text and timestamp */
-   @apply shadow-md hover:shadow-lg transition-shadow duration-300; /* Use theme shadows with transition */
+.chat-message {
+    @apply animate-pop-in mb-6; /* Use pop-in animation and ensure consistent spacing */
 }
+
+/* Base styling for message bubbles */
+.chat-bubble {
+   @apply rounded-xl p-3 max-w-[75%] transition-all duration-300 ease-out shadow-md hover:shadow-lg;
+   /* Added glow effect for dark mode */
+   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); */
+}
+.dark .chat-bubble {
+   /* box-shadow: 0 0 10px 0px hsl(var(--primary) / 0.1); */
+}
+.dark .chat-bubble:hover {
+   /* box-shadow: 0 0 15px 2px hsl(var(--primary) / 0.2); */
+}
+
 
 /* Light mode message styling */
-.light .chat-message.user-message > div > div {
-    @apply bg-primary text-primary-foreground;
+.light .chat-message.user-message .chat-bubble {
+    @apply bg-primary text-primary-foreground animate-slide-in-right;
 }
-.light .chat-message.persona-message > div > div {
-    @apply bg-card text-card-foreground;
+.light .chat-message.persona-message .chat-bubble {
+    @apply bg-card text-card-foreground animate-slide-in-left;
 }
-.light .chat-message > div > div {
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.light .chat-message .chat-bubble {
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
-.light .chat-message > div > div:hover {
-   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.07);
+.light .chat-message .chat-bubble:hover {
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
 }
 
+
 /* Dark mode message styling */
-.dark .chat-message.user-message > div > div {
-    @apply bg-primary text-primary-foreground;
+.dark .chat-message.user-message .chat-bubble {
+    @apply bg-primary text-primary-foreground animate-slide-in-right;
+    box-shadow: 0 4px 10px -2px hsl(var(--primary) / 0.25);
 }
-.dark .chat-message.persona-message > div > div {
-    @apply bg-muted text-muted-foreground; /* Use muted for persona in dark */
+.dark .chat-message.persona-message .chat-bubble {
+    @apply bg-card text-card-foreground animate-slide-in-left; /* Use card for persona in dark for contrast */
+    box-shadow: 0 4px 10px -2px hsl(var(--secondary) / 0.15);
 }
-/* Optional glow effect for dark mode - uncomment if desired */
-/*
-.dark .chat-message > div > div {
-   box-shadow: 0 0 8px 0px hsl(var(--primary) / 0.2);
+.dark .chat-message .chat-bubble:hover {
+    transform: translateY(-2px);
 }
-.dark .chat-message > div > div:hover {
-   box-shadow: 0 0 12px 2px hsl(var(--primary) / 0.3);
+.dark .chat-message.user-message .chat-bubble:hover {
+     box-shadow: 0 6px 15px -3px hsl(var(--primary) / 0.3);
 }
-*/
+.dark .chat-message.persona-message .chat-bubble:hover {
+     box-shadow: 0 6px 15px -3px hsl(var(--secondary) / 0.2);
+}
+
+
+/* Timestamp styling */
+.chat-timestamp {
+    @apply text-xs mt-1.5;
+}
+.light .chat-message.user-message .chat-timestamp {
+    @apply text-primary-foreground/70 text-right;
+}
+.light .chat-message.persona-message .chat-timestamp {
+    @apply text-muted-foreground text-left;
+}
+.dark .chat-message.user-message .chat-timestamp {
+    @apply text-primary-foreground/80 text-right; /* Slightly more visible */
+}
+.dark .chat-message.persona-message .chat-timestamp {
+    @apply text-muted-foreground text-left;
+}
+
+/* Header & Footer Styling */
+.app-header {
+    @apply border-b p-4 flex justify-between items-center bg-card text-card-foreground shadow-md transition-shadow duration-300;
+    /* Slight glow on header in dark mode */
+}
+.dark .app-header {
+     box-shadow: 0 2px 10px 0px hsl(var(--background) / 0.5);
+}
+
+.chat-input-area {
+     @apply p-4 bg-card border-t transition-shadow duration-300;
+}
+.dark .chat-input-area {
+     box-shadow: 0 -2px 10px 0px hsl(var(--background) / 0.5);
+}
+
+/* Button hover/active states */
+.button-fancy {
+    @apply transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg active:scale-95 active:shadow-sm;
+}
+.dark .button-fancy:hover {
+    box-shadow: 0 0 15px 2px hsl(var(--primary) / 0.3);
+}
+
+/* Loading spinner styling */
+.loading-spinner {
+   @apply h-5 w-5 animate-spin text-primary; /* Use primary color */
+}
+.dark .loading-spinner {
+    /* Optionally different color in dark mode */
+     /* @apply text-secondary; */
+}
+
 

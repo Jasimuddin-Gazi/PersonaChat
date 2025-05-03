@@ -32,7 +32,7 @@ import {
     DropdownMenuSubContent,
     DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes";
+import { useTheme } from "next-themes"; // Import useTheme hook
 import { cn } from "@/lib/utils"; // Ensure cn is imported
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
@@ -45,7 +45,7 @@ export default function Home() {
   const [isCreatingPersona, setIsCreatingPersona] = React.useState(false);
   const [isClientHydrated, setIsClientHydrated] = React.useState(false);
   const { toast } = useToast();
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme } = useTheme(); // Get theme functions
 
   React.useEffect(() => {
     setIsClientHydrated(true);
@@ -103,13 +103,13 @@ export default function Home() {
 
     try {
        const historyString = (chatHistory[personaId] || [])
-         .slice(-10)
+         .slice(-10) // Limit history context
          .map(msg => `${msg.sender === 'user' ? 'User' : persona.name}: ${msg.text}`)
          .join('\n');
 
       const response = await getPersonaResponseAction({
         personaName: persona.name,
-        personaDescription: persona.description,
+        personaDescription: persona.description, // Use full description
         userMessage: messageText,
         chatHistory: historyString,
         isDreamScenario: persona.isDreamScenario,
@@ -126,13 +126,25 @@ export default function Home() {
        // Use functional update for reliable state transitions
        setChatHistory((prev) => {
             const currentMessages = prev[personaId] || [];
-            // Ensure user message is still present before adding persona message
-            const userMessageExists = currentMessages.some(msg => msg.id === userMessage.id);
-            const baseMessages = userMessageExists ? currentMessages : [...currentMessages, userMessage];
-            return {
-                ...prev,
-                [personaId]: [...baseMessages, personaMessage],
-            };
+            // Find the index of the user's message to insert the AI response after it
+            const userMessageIndex = currentMessages.findIndex(msg => msg.id === userMessage.id);
+
+            // If user message exists, insert AI message right after
+            if (userMessageIndex !== -1) {
+              const newMessages = [...currentMessages];
+              newMessages.splice(userMessageIndex + 1, 0, personaMessage);
+              return {
+                  ...prev,
+                  [personaId]: newMessages,
+              };
+            } else {
+              // Fallback: add both messages if user message wasn't found (should not happen ideally)
+               console.warn("User message not found in history, appending both messages.");
+               return {
+                 ...prev,
+                 [personaId]: [...currentMessages, userMessage, personaMessage],
+               };
+            }
         });
 
     } catch (error) {
@@ -174,26 +186,24 @@ export default function Home() {
   return (
     <div className={cn(
         "flex h-screen flex-col",
-         // Apply bg-gradient-animation conditionally or directly in layout
-         // If applying here, ensure parent elements allow for it.
-         // "bg-gradient-animation"
+         // Gradient is now applied via main layout
          )}>
-       <header className="border-b p-4 flex justify-between items-center bg-card text-card-foreground shadow-sm"> {/* Applied card styles + shadow */}
+       <header className="app-header"> {/* Apply header class */}
          {/* Apply heading font */}
-         <h1 className="text-2xl font-heading font-semibold flex items-center gap-2"><Bot size={28}/> PersonaChat</h1>
+         <h1 className="text-2xl font-heading font-bold flex items-center gap-2 animate-fade-in"><Bot size={28} className="animate-float"/> PersonaChat</h1> {/* Bold heading, float animation */}
          <DropdownMenu>
              <DropdownMenuTrigger asChild>
-                 <Button variant="ghost" size="icon">
-                     <Settings className="h-5 w-5" />
+                 <Button variant="ghost" size="icon" className="rounded-full"> {/* Rounded button */}
+                     <Settings className="h-5 w-5 animate-spin [animation-duration:5s]" /> {/* Slow spin */}
                      <span className="sr-only">Settings & Features</span>
                  </Button>
              </DropdownMenuTrigger>
-             <DropdownMenuContent align="end">
-                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
+             <DropdownMenuContent align="end" className="animate-fade-in"> {/* Animate dropdown */}
+                 <DropdownMenuLabel>Appearance</DropdownMenuLabel>
                  <DropdownMenuSeparator />
                   <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
-                          {theme === 'light' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                          {theme === 'light' ? <Sun className="mr-2 h-4 w-4 text-yellow-500" /> : <Moon className="mr-2 h-4 w-4 text-blue-400" />}
                           <span>Theme</span>
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -229,14 +239,14 @@ export default function Home() {
        </header>
         <ResizablePanelGroup
             direction="horizontal"
-            className="flex-1 border-t"
+            className="flex-1 border-t border-border/50" // Lighter border
             style={{ opacity: isClientHydrated ? 1 : 0 }}
          >
-        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card shadow-md"> {/* Apply card styles + shadow */}
-            <div className="p-4 space-y-4 border-b">
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card/80 backdrop-blur-sm shadow-lg"> {/* Blurred bg, shadow */}
+            <div className="p-4 space-y-4 border-b border-border/50"> {/* Lighter border */}
                  <Button
                     onClick={() => setIsCreatingPersona(!isCreatingPersona)}
-                    className="w-full transition-all duration-300 ease-in-out transform hover:scale-105"
+                    className="w-full button-fancy" // Apply fancy button style
                     variant={isCreatingPersona ? "secondary" : "default"}
                     >
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -248,7 +258,7 @@ export default function Home() {
                     </div>
                 )}
             </div>
-            <Separator />
+            <Separator className="bg-border/30"/> {/* Even lighter separator */}
             {isClientHydrated ? (
               <PersonaList
                   personas={personas}
@@ -257,18 +267,25 @@ export default function Home() {
                   onDeletePersona={handleDeletePersona}
               />
             ) : (
+              // Enhanced Skeleton Loading
               <ScrollArea className="h-full flex-1">
                 <div className="space-y-4 p-4">
-                  <Skeleton className="h-24 w-full rounded-lg" />
-                  <Skeleton className="h-24 w-full rounded-lg" />
-                  <Skeleton className="h-24 w-full rounded-lg" />
+                  {[1, 2, 3].map(i => (
+                     <div key={i} className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg animate-pulse">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-2 flex-1">
+                          <Skeleton className="h-4 w-3/4 rounded" />
+                          <Skeleton className="h-3 w-1/2 rounded" />
+                        </div>
+                      </div>
+                  ))}
                 </div>
               </ScrollArea>
             )}
 
         </ResizablePanel>
-        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/10 active:bg-primary/20" />
-        <ResizablePanel defaultSize={75} className="bg-background">
+        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/20 active:bg-primary/30" /> {/* Adjusted hover/active */}
+        <ResizablePanel defaultSize={75} className="bg-transparent"> {/* Transparent panel to show gradient */}
            <ChatInterface
                 persona={selectedPersona}
                 messages={currentMessages}

@@ -69,7 +69,9 @@ export default {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+            xl: 'calc(var(--radius) + 4px)', // Added xl for more rounded elements
+            full: '9999px',
   		},
        boxShadow: { // Added custom shadows for subtle depth
          'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
@@ -101,36 +103,47 @@ export default {
   				}
   			},
            'fadeIn': {
-             'from': { opacity: '0' },
-             'to': { opacity: '1' },
+             'from': { opacity: '0', transform: 'translateY(5px)' }, // Slight upward movement
+             'to': { opacity: '1', transform: 'translateY(0)' },
            },
            'slideInLeft': {
-             'from': { transform: 'translateX(-20px)', opacity: '0' },
+             'from': { transform: 'translateX(-30px)', opacity: '0' },
              'to': { transform: 'translateX(0)', opacity: '1' },
            },
            'slideInRight': {
-             'from': { transform: 'translateX(20px)', opacity: '0' },
+             'from': { transform: 'translateX(30px)', opacity: '0' },
              'to': { transform: 'translateX(0)', opacity: '1' },
            },
-            'popIn': { // Keyframe for pop-in animation
-             '0%': { transform: 'scale(0.9)', opacity: '0' },
-             '80%': { transform: 'scale(1.02)', opacity: '1' },
+            'popIn': { // Bouncier pop-in animation
+             '0%': { transform: 'scale(0.8)', opacity: '0' },
+             '50%': { transform: 'scale(1.05)', opacity: '1' },
              '100%': { transform: 'scale(1)', opacity: '1' },
            },
-           'gradientBG': { // Background gradient animation keyframe
-              '0%': { 'background-position': '0% 50%' },
-              '50%': { 'background-position': '100% 50%' },
-              '100%': { 'background-position': '0% 50%' },
+           'gradientBG': { // Enhanced Background gradient animation keyframe
+              '0%': { 'background-position': '0% 50%, 100% 50%, center' },
+              '50%': { 'background-position': '100% 50%, 0% 50%, center' },
+              '100%': { 'background-position': '0% 50%, 100% 50%, center' },
             },
+           'pulseGlow': { // New pulse glow keyframe
+              '0%, 100%': { 'box-shadow': '0 0 5px 0px hsl(var(--primary) / 0.3)', opacity: '0.8' },
+              '50%': { 'box-shadow': '0 0 15px 3px hsl(var(--primary) / 0.5)', opacity: '1' },
+            },
+           'float': { // New float keyframe
+             '0%, 100%': { transform: 'translateY(0)' },
+             '50%': { transform: 'translateY(-6px)' },
+           },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-in-out',
-            'slide-in-left': 'slideInLeft 0.5s ease-out',
-            'slide-in-right': 'slideInRight 0.5s ease-out',
-            'pop-in': 'popIn 0.3s ease-out forwards',
-            'gradient-bg': 'gradientBG 15s ease infinite', // Background gradient animation utility
+            'fade-in': 'fadeIn 0.6s ease-out forwards',
+            'fade-in-delay': 'fadeIn 0.6s ease-out 0.2s forwards', // Added fade-in with delay
+            'slide-in-left': 'slideInLeft 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+            'slide-in-right': 'slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+            'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+            'gradient-bg': 'gradientBG 25s ease infinite', // Enhanced gradient animation
+            'pulse-glow': 'pulseGlow 2s infinite ease-in-out', // New pulse glow animation
+            'float': 'float 3s infinite ease-in-out', // New float animation
   		}
   	}
   },
