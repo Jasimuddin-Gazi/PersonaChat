@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -105,8 +106,8 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
 
 
   return (
-    <div className="flex h-full flex-col">
-      <TooltipProvider> {/* Ensure TooltipProvider wraps the header */}
+    <TooltipProvider> {/* Ensure TooltipProvider wraps the entire component */}
+        <div className="flex h-full flex-col">
         {/* Chat Header */}
          <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -158,103 +159,105 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </TooltipProvider>
 
-      {/* Chat Messages */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 space-y-4">
-         {messages.length === 0 ? (
-             <div className="flex items-center justify-center h-full text-muted-foreground">
-                 <p>No messages yet. Start the conversation!</p>
-             </div>
-         ) : (
-            messages.map((msg) => (
-            <div
-                key={msg.id}
-                className={`flex items-end gap-2 ${
-                msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-            >
-                {msg.sender === 'persona' && (
-                     <Tooltip>
-                         <TooltipTrigger asChild>
-                             <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
+        {/* Chat Messages */}
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 space-y-4">
+          {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <p>No messages yet. Start the conversation!</p>
+              </div>
+          ) : (
+              messages.map((msg) => (
+              <div
+                  key={msg.id}
+                  className={`flex items-end gap-2 ${
+                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                  }`}
+              >
+                  {msg.sender === 'persona' && (
+                      <Tooltip>
+                          <TooltipTrigger asChild>
+                              <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
                                 <AvatarFallback>
                                     {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
                                 </AvatarFallback>
-                             </Avatar>
-                         </TooltipTrigger>
-                         {persona.isDreamScenario && (
-                             <TooltipContent side="right">
-                                 <p>Scenario Response</p>
-                             </TooltipContent>
-                         )}
-                     </Tooltip>
-                )}
-                <div
-                    className={`max-w-[75%] rounded-lg p-3 shadow-sm ${
-                    msg.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground'
-                    }`}
-                >
-                    <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-secondary-foreground/70 text-left'}`}>
-                        {format(new Date(msg.timestamp), 'p')} {/* Ensure timestamp is Date object */}
-                    </p>
-                </div>
-                 {msg.sender === 'user' && (
-                    <Avatar className="h-8 w-8 border self-start">
-                    <AvatarFallback><User size={16} /></AvatarFallback>
-                    </Avatar>
-                )}
-            </div>
-            ))
-         )}
-         {/* Optional: Show typing indicator */}
-         {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
-            <div className="flex items-end gap-2 justify-start">
-                 <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
-                    <AvatarFallback>
-                        {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
-                    </AvatarFallback>
-                 </Avatar>
-                 <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-secondary text-secondary-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                 </div>
-            </div>
-         )}
-      </ScrollArea>
+                              </Avatar>
+                          </TooltipTrigger>
+                          {persona.isDreamScenario && (
+                              <TooltipContent side="right">
+                                  <p>Scenario Response</p>
+                              </TooltipContent>
+                          )}
+                      </Tooltip>
+                  )}
+                  <div
+                      className={`max-w-[75%] rounded-lg p-3 shadow-sm ${
+                      msg.sender === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-secondary text-secondary-foreground'
+                      }`}
+                  >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-secondary-foreground/70 text-left'}`}>
+                          {format(new Date(msg.timestamp), 'p')} {/* Ensure timestamp is Date object */}
+                      </p>
+                  </div>
+                  {msg.sender === 'user' && (
+                      <Avatar className="h-8 w-8 border self-start">
+                      <AvatarFallback><User size={16} /></AvatarFallback>
+                      </Avatar>
+                  )}
+              </div>
+              ))
+          )}
+          {/* Optional: Show typing indicator */}
+          {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
+              <div className="flex items-end gap-2 justify-start">
+                  <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
+                      <AvatarFallback>
+                          {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
+                      </AvatarFallback>
+                  </Avatar>
+                  <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-secondary text-secondary-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+              </div>
+          )}
+        </ScrollArea>
 
-      {/* Chat Input */}
-      <Separator />
-      <div className="p-4">
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-            }}
-            className="flex items-center gap-2"
-            >
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder={`Message ${persona.name}...`}
-            className="flex-1"
-            disabled={isLoading}
-            autoComplete="off"
-          />
-          <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()}>
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-            <span className="sr-only">Send message</span>
-          </Button>
-        </form>
+        {/* Chat Input */}
+        <Separator />
+        <div className="p-4">
+          <form
+              onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend();
+              }}
+              className="flex items-center gap-2"
+              >
+            <Input
+              ref={inputRef}
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder={`Message ${persona.name}...`}
+              className="flex-1"
+              disabled={isLoading}
+              autoComplete="off"
+            />
+            <Button type="submit" size="icon" disabled={isLoading || !inputValue.trim()}>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              <span className="sr-only">Send message</span>
+            </Button>
+          </form>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
+
+    
