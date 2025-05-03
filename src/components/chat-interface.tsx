@@ -24,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils"; // Import cn utility
+import { cn } from "@/lib/utils";
 
 
 export interface ChatMessage {
@@ -198,14 +198,14 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                   )}
                   <div
                       className={cn(
-                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300", // Added transition & shadow-md
+                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300 hover:shadow-lg", // Added transition & hover shadow
                         msg.sender === 'user'
-                            ? 'bg-primary text-primary-foreground animate-slide-in-right' // Added animation
-                            : 'bg-secondary text-secondary-foreground animate-slide-in-left' // Added animation
+                            ? 'bg-primary/90 text-primary-foreground animate-slide-in-right' // Adjusted user bg, added animation
+                            : 'bg-muted text-muted-foreground animate-slide-in-left' // Adjusted persona bg, added animation
                       )}
                   >
                       <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                      <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-secondary-foreground/70 text-left'}`}>
+                      <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-muted-foreground/80 text-left'}`}>
                           {format(new Date(msg.timestamp), 'p')}
                       </p>
                   </div>
@@ -217,7 +217,8 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               </div>
               ))
           )}
-          {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
+          {/* Loading indicator shown only when AI is generating a response */}
+          {isLoading && (
               <div className="flex items-end gap-2 justify-start mb-6 animate-fade-in">
                    <Avatar className={cn(
                       "h-8 w-8 border self-start",

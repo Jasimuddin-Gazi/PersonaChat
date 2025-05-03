@@ -96,7 +96,7 @@ export default {
              'from': { transform: 'translateX(20px)', opacity: '0' },
              'to': { transform: 'translateX(0)', opacity: '1' },
            },
-            'popIn': { // Added popIn animation
+            'popIn': { // Keyframe for pop-in animation
              '0%': { transform: 'scale(0.9)', opacity: '0' },
              '80%': { transform: 'scale(1.02)', opacity: '1' },
              '100%': { transform: 'scale(1)', opacity: '1' },
