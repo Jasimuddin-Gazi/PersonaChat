@@ -171,7 +171,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               <div
                   key={msg.id}
                   className={cn(
-                      "flex items-end gap-2 mb-6 chat-message", // Added chat-message class and increased margin-bottom
+                      "flex items-end gap-2 mb-6 chat-message", // Use mb-6 for more space
                       msg.sender === 'user' ? 'justify-end user-message' : 'justify-start persona-message'
                   )}
               >
@@ -198,14 +198,19 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                   )}
                   <div
                       className={cn(
-                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300 hover:shadow-lg", // Added transition & hover shadow
+                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300 hover:shadow-lg", // Kept shadow
                         msg.sender === 'user'
-                            ? 'bg-primary/90 text-primary-foreground animate-slide-in-right' // Adjusted user bg, added animation
-                            : 'bg-muted text-muted-foreground animate-slide-in-left' // Adjusted persona bg, added animation
+                            ? 'bg-primary/90 text-primary-foreground animate-slide-in-right' // User message: Primary color bg
+                            : 'bg-card text-card-foreground animate-slide-in-left' // Persona message: Card color bg for better contrast
                       )}
                   >
                       <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                      <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-muted-foreground/80 text-left'}`}>
+                      <p className={cn(
+                          "text-xs mt-1",
+                          msg.sender === 'user'
+                            ? 'text-primary-foreground/70 text-right' // User timestamp: Muted primary foreground
+                            : 'text-muted-foreground text-left' // Persona timestamp: Muted foreground
+                        )}>
                           {format(new Date(msg.timestamp), 'p')}
                       </p>
                   </div>
@@ -230,8 +235,8 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                           {persona.isDreamScenario ? <Sparkles size={16} /> : <Bot size={16} />}
                       </AvatarFallback>
                   </Avatar>
-                  <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-muted text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                  <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-card text-card-foreground"> {/* Use card background for loading */}
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> {/* Muted color for spinner */}
                   </div>
               </div>
           )}
