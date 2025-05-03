@@ -5,7 +5,7 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Loader2, Sparkles, Save } from "lucide-react";
+import { Loader2, Sparkles, Save, Pencil } from "lucide-react"; // Import Pencil icon
 
 import { Button } from "@/components/ui/button";
 import {
@@ -226,3 +226,4 @@ export function PersonaEditDialog({ isOpen, onClose, persona, onPersonaUpdated }
     </Dialog>
   );
 }
+
