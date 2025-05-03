@@ -2,13 +2,13 @@
 "use client";
 
 import * as React from "react";
-import { Bot, Trash2, Sparkles } from "lucide-react";
+import { Bot, Trash2, Sparkles, Pencil } from "lucide-react"; // Added Pencil icon
 import { formatDistanceToNow } from 'date-fns';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"; // Adjusted imports
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Removed CardFooter as it's not used
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"; // Removed AvatarImage as it's unused
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,33 +22,29 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Persona } from "@/types/persona";
-import { cn } from "@/lib/utils"; // Import cn utility
+import { cn } from "@/lib/utils";
 
 type PersonaListProps = {
   personas: Persona[];
   selectedPersonaId: string | null;
   onSelectPersona: (id: string) => void;
   onDeletePersona: (id: string) => void;
+  onEditPersona: (id: string) => void; // Added prop for editing
 };
 
-export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDeletePersona }: PersonaListProps) {
+export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDeletePersona, onEditPersona }: PersonaListProps) {
 
-  const handleDeleteClick = (e: React.MouseEvent, personaId: string) => {
-    e.stopPropagation(); // Prevent card selection when clicking delete
-    // Find the persona being deleted to show its name in the confirmation
-    const personaToDelete = personas.find(p => p.id === personaId);
-    if (personaToDelete) {
-        // The AlertDialog will handle the actual deletion call via its action button
-        // This function is now primarily for stopping propagation
-    }
+  const handleEditClick = (e: React.MouseEvent, personaId: string) => {
+    e.stopPropagation(); // Prevent card selection when clicking edit
+    onEditPersona(personaId);
   };
 
   return (
     <ScrollArea className="h-full flex-1">
-       <TooltipProvider delayDuration={100}> {/* Shorter delay */}
-          <div className="space-y-3 p-3"> {/* Reduced spacing and padding */}
+       <TooltipProvider delayDuration={100}>
+          <div className="space-y-3 p-3">
             {personas.length === 0 && (
-              <p className="text-center text-muted-foreground p-6 animate-fade-in-delay"> {/* Added delay */}
+              <p className="text-center text-muted-foreground p-6 animate-fade-in-delay">
                 No personas yet. <br/> Create one to start chatting!
               </p>
             )}
@@ -56,19 +52,19 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
               <Card
                 key={persona.id}
                 className={cn(
-                  "cursor-pointer transition-all duration-300 ease-out persona-card border-2 bg-card/80 backdrop-blur-sm", // Use persona-card class, blur effect
+                  "cursor-pointer transition-all duration-300 ease-out persona-card border-2 bg-card/80 backdrop-blur-sm",
                   selectedPersonaId === persona.id
-                    ? 'border-primary ring-2 ring-primary/50 shadow-lg' // Enhanced selection style
-                    : 'border-transparent hover:border-primary/30' // Transparent base border, subtle hover
+                    ? 'border-primary ring-2 ring-primary/50 shadow-lg'
+                    : 'border-transparent hover:border-primary/30'
                 )}
                 onClick={() => onSelectPersona(persona.id)}
               >
-                <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-3"> {/* Reduced padding */}
+                <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
                        <Avatar className={cn(
                            "h-10 w-10 border-2 transition-transform duration-300 hover:scale-110",
-                           persona.isDreamScenario ? 'border-secondary' : 'border-primary' // Use secondary for dream
+                           persona.isDreamScenario ? 'border-secondary' : 'border-primary'
                          )}>
                          <AvatarFallback className={cn(
                             "font-semibold",
@@ -83,19 +79,40 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                     </TooltipContent>
                   </Tooltip>
 
-                  <div className="grid gap-0.5 flex-1"> {/* Reduced gap */}
-                    <CardTitle className="text-card-foreground text-base font-semibold line-clamp-1">{persona.name}</CardTitle> {/* Adjusted size/weight */}
-                    <CardDescription className="line-clamp-1 text-muted-foreground text-xs"> {/* Adjusted size */}
+                  <div className="grid gap-0.5 flex-1">
+                    <CardTitle className="text-card-foreground text-base font-semibold line-clamp-1">{persona.name}</CardTitle>
+                    <CardDescription className="line-clamp-1 text-muted-foreground text-xs">
                         {persona.isDreamScenario ? persona.skills : persona.greeting}
                     </CardDescription>
                   </div>
+
+                   {/* Edit Button */}
+                   <Tooltip>
+                        <TooltipTrigger asChild>
+                           <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-primary transition-colors rounded-full opacity-70 hover:opacity-100" // Use primary color for edit hover
+                              onClick={(e) => handleEditClick(e, persona.id)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                              <span className="sr-only">Edit Persona</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            <p>Edit {persona.name}</p>
+                        </TooltipContent>
+                    </Tooltip>
+
+
+                   {/* Delete Button */}
                    <AlertDialog>
                     <AlertDialogTrigger asChild>
                        <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors rounded-full opacity-70 hover:opacity-100" // Smaller, rounded, opacity transition
-                          onClick={(e) => e.stopPropagation()} // Stop propagation here too
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors rounded-full opacity-70 hover:opacity-100"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete Persona</span>
@@ -111,20 +128,14 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 button-fancy" // Apply fancy button style
-                          onClick={() => onDeletePersona(persona.id)}> {/* Actual delete call */}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 button-fancy"
+                          onClick={() => onDeletePersona(persona.id)}>
                           Delete Permanently
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
                 </CardHeader>
-                {/* Removed Footer for cleaner look, creation time might not be essential */}
-                {/*
-                <CardFooter className="text-xs text-muted-foreground pt-2 pb-3 px-3">
-                  Created {formatDistanceToNow(new Date(persona.createdAt), { addSuffix: true })}
-                </CardFooter>
-                */}
               </Card>
             ))}
           </div>

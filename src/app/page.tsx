@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { PersonaForm } from "@/components/persona-form";
 import { PersonaList } from "@/components/persona-list";
 import { ChatInterface, type ChatMessage } from "@/components/chat-interface";
+import { PersonaEditDialog } from "@/components/persona-edit-dialog"; // Import the new component
 import {
   ResizableHandle,
   ResizablePanel,
@@ -32,8 +33,8 @@ import {
     DropdownMenuSubContent,
     DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes"; // Import useTheme hook
-import { cn } from "@/lib/utils"; // Ensure cn is imported
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
 
@@ -43,9 +44,11 @@ export default function Home() {
   const [selectedPersonaId, setSelectedPersonaId] = React.useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = React.useState(false);
   const [isCreatingPersona, setIsCreatingPersona] = React.useState(false);
+  const [isEditingPersona, setIsEditingPersona] = React.useState(false); // State for edit dialog
+  const [editingPersonaId, setEditingPersonaId] = React.useState<string | null>(null); // ID of persona being edited
   const [isClientHydrated, setIsClientHydrated] = React.useState(false);
   const { toast } = useToast();
-  const { setTheme, theme } = useTheme(); // Get theme functions
+  const { setTheme, theme } = useTheme();
 
   React.useEffect(() => {
     setIsClientHydrated(true);
@@ -54,8 +57,26 @@ export default function Home() {
   const handlePersonaCreated = (newPersona: Persona) => {
     setPersonas((prevPersonas) => [...prevPersonas, newPersona]);
     setIsCreatingPersona(false);
-    setSelectedPersonaId(newPersona.id);
+    setSelectedPersonaId(newPersona.id); // Select the newly created persona
   };
+
+   const handleEditPersona = (idToEdit: string) => {
+    setEditingPersonaId(idToEdit);
+    setIsEditingPersona(true);
+  };
+
+  const handlePersonaUpdated = (updatedPersona: Persona) => {
+    setPersonas((prev) =>
+      prev.map((p) => (p.id === updatedPersona.id ? updatedPersona : p))
+    );
+    setIsEditingPersona(false);
+    setEditingPersonaId(null);
+    // If the currently selected persona was edited, ensure it reflects updates
+    if (selectedPersonaId === updatedPersona.id) {
+        // The selectedPersona object will update automatically due to state change
+    }
+  };
+
 
   const handleDeletePersona = (idToDelete: string) => {
      setPersonas((prev) => prev.filter(p => p.id !== idToDelete));
@@ -89,8 +110,6 @@ export default function Home() {
       timestamp: new Date(),
     };
 
-    // Update chat history immediately with user message
-     // Use functional update for reliable state transitions
      setChatHistory((prev) => {
         const currentMessages = prev[personaId] || [];
         return {
@@ -122,29 +141,21 @@ export default function Home() {
         timestamp: new Date(),
       };
 
-       // Update chat history with persona message
-       // Use functional update for reliable state transitions
        setChatHistory((prev) => {
             const currentMessages = prev[personaId] || [];
-            // Find the index of the user's message to insert the AI response after it
-            const userMessageIndex = currentMessages.findIndex(msg => msg.id === userMessage.id);
-
-            // If user message exists, insert AI message right after
-            if (userMessageIndex !== -1) {
-              const newMessages = [...currentMessages];
-              newMessages.splice(userMessageIndex + 1, 0, personaMessage);
-              return {
-                  ...prev,
-                  [personaId]: newMessages,
-              };
+            // Ensure messages are added sequentially if AI responds quickly
+            const latestMessages = [...currentMessages];
+             // Check if user message is already there before adding AI message
+            if (latestMessages.some(msg => msg.id === userMessage.id)) {
+                 latestMessages.push(personaMessage);
             } else {
-              // Fallback: add both messages if user message wasn't found (should not happen ideally)
-               console.warn("User message not found in history, appending both messages.");
-               return {
-                 ...prev,
-                 [personaId]: [...currentMessages, userMessage, personaMessage],
-               };
+                 // This case shouldn't ideally happen with sequential updates
+                 latestMessages.push(userMessage, personaMessage);
             }
+            return {
+                ...prev,
+                [personaId]: latestMessages,
+            };
         });
 
     } catch (error) {
@@ -154,7 +165,6 @@ export default function Home() {
         description: "Failed to get response from persona.",
         variant: "destructive",
        });
-       // Optionally remove the user's message if the AI failed
         setChatHistory((prev) => {
             const currentMessages = prev[personaId] || [];
             return {
@@ -168,7 +178,7 @@ export default function Home() {
   };
 
   const selectedPersona = personas.find(p => p.id === selectedPersonaId) || null;
-  // Ensure currentMessages reflects the latest state after updates
+  const personaBeingEdited = personas.find(p => p.id === editingPersonaId) || null;
   const currentMessages = React.useMemo(() => chatHistory[selectedPersonaId ?? ''] || [], [chatHistory, selectedPersonaId]);
 
 
@@ -186,19 +196,17 @@ export default function Home() {
   return (
     <div className={cn(
         "flex h-screen flex-col",
-         // Gradient is now applied via main layout
          )}>
-       <header className="app-header"> {/* Apply header class */}
-         {/* Apply heading font */}
-         <h1 className="text-2xl font-heading font-bold flex items-center gap-2 animate-fade-in"><Bot size={28} className="animate-float"/> PersonaChat</h1> {/* Bold heading, float animation */}
+       <header className="app-header">
+         <h1 className="text-2xl font-heading font-bold flex items-center gap-2 animate-fade-in"><Bot size={28} className="animate-float"/> PersonaChat</h1>
          <DropdownMenu>
              <DropdownMenuTrigger asChild>
-                 <Button variant="ghost" size="icon" className="rounded-full"> {/* Rounded button */}
-                     <Settings className="h-5 w-5 animate-spin [animation-duration:5s]" /> {/* Slow spin */}
+                 <Button variant="ghost" size="icon" className="rounded-full">
+                     <Settings className="h-5 w-5 animate-spin [animation-duration:5s]" />
                      <span className="sr-only">Settings & Features</span>
                  </Button>
              </DropdownMenuTrigger>
-             <DropdownMenuContent align="end" className="animate-fade-in"> {/* Animate dropdown */}
+             <DropdownMenuContent align="end" className="animate-fade-in">
                  <DropdownMenuLabel>Appearance</DropdownMenuLabel>
                  <DropdownMenuSeparator />
                   <DropdownMenuSub>
@@ -239,14 +247,14 @@ export default function Home() {
        </header>
         <ResizablePanelGroup
             direction="horizontal"
-            className="flex-1 border-t border-border/50" // Lighter border
+            className="flex-1 border-t border-border/50"
             style={{ opacity: isClientHydrated ? 1 : 0 }}
          >
-        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card/80 backdrop-blur-sm shadow-lg"> {/* Blurred bg, shadow */}
-            <div className="p-4 space-y-4 border-b border-border/50"> {/* Lighter border */}
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card/80 backdrop-blur-sm shadow-lg">
+            <div className="p-4 space-y-4 border-b border-border/50">
                  <Button
                     onClick={() => setIsCreatingPersona(!isCreatingPersona)}
-                    className="w-full button-fancy" // Apply fancy button style
+                    className="w-full button-fancy"
                     variant={isCreatingPersona ? "secondary" : "default"}
                     >
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -258,16 +266,16 @@ export default function Home() {
                     </div>
                 )}
             </div>
-            <Separator className="bg-border/30"/> {/* Even lighter separator */}
+            <Separator className="bg-border/30"/>
             {isClientHydrated ? (
               <PersonaList
                   personas={personas}
                   selectedPersonaId={selectedPersonaId}
                   onSelectPersona={setSelectedPersonaId}
                   onDeletePersona={handleDeletePersona}
+                  onEditPersona={handleEditPersona} // Pass the edit handler
               />
             ) : (
-              // Enhanced Skeleton Loading
               <ScrollArea className="h-full flex-1">
                 <div className="space-y-4 p-4">
                   {[1, 2, 3].map(i => (
@@ -284,8 +292,8 @@ export default function Home() {
             )}
 
         </ResizablePanel>
-        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/20 active:bg-primary/30" /> {/* Adjusted hover/active */}
-        <ResizablePanel defaultSize={75} className="bg-transparent"> {/* Transparent panel to show gradient */}
+        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/20 active:bg-primary/30" />
+        <ResizablePanel defaultSize={75} className="bg-transparent">
            <ChatInterface
                 persona={selectedPersona}
                 messages={currentMessages}
@@ -295,6 +303,20 @@ export default function Home() {
             />
         </ResizablePanel>
         </ResizablePanelGroup>
+
+        {/* Render Edit Dialog */}
+        {personaBeingEdited && (
+            <PersonaEditDialog
+                isOpen={isEditingPersona}
+                onClose={() => {
+                    setIsEditingPersona(false);
+                    setEditingPersonaId(null);
+                }}
+                persona={personaBeingEdited}
+                onPersonaUpdated={handlePersonaUpdated}
+            />
+        )}
     </div>
   );
 }
+
