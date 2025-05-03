@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils"; // Import cn utility
 
 
 export interface ChatMessage {
@@ -109,8 +110,13 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
           <div className="flex items-center gap-3">
              <Tooltip>
                <TooltipTrigger asChild>
-                 <Avatar className={`h-10 w-10 border transition-transform duration-300 hover:scale-110 ${persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'}`}> {/* Style tweaks */}
-                   <AvatarFallback className={`${persona.isDreamScenario ? 'text-accent' : 'text-primary'}`}>
+                 <Avatar className={cn(
+                    "h-10 w-10 border transition-transform duration-300 hover:scale-110",
+                    persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                 )}>
+                   <AvatarFallback className={cn(
+                     persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                   )}>
                      {persona.isDreamScenario ? <Sparkles size={20} /> : <Bot size={20} />}
                    </AvatarFallback>
                  </Avatar>
@@ -165,15 +171,20 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               <div
                   key={msg.id}
                   className={cn(
-                      "flex items-end gap-2 mb-6 chat-message", // Added chat-message class
+                      "flex items-end gap-2 mb-6 chat-message", // Added chat-message class and increased margin-bottom
                       msg.sender === 'user' ? 'justify-end user-message' : 'justify-start persona-message'
                   )}
               >
                   {msg.sender === 'persona' && (
                       <Tooltip>
                           <TooltipTrigger asChild>
-                              <Avatar className={`h-8 w-8 border self-start transition-transform duration-300 hover:scale-110 ${persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'}`}>
-                                <AvatarFallback className={`${persona.isDreamScenario ? 'text-accent' : 'text-primary'}`}>
+                              <Avatar className={cn(
+                                  "h-8 w-8 border self-start transition-transform duration-300 hover:scale-110",
+                                   persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                                )}>
+                                <AvatarFallback className={cn(
+                                    persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                                )}>
                                     {persona.isDreamScenario ? <Sparkles size={16} /> : <Bot size={16} />}
                                 </AvatarFallback>
                               </Avatar>
@@ -186,11 +197,12 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                       </Tooltip>
                   )}
                   <div
-                      className={`max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300 ${ // Added transition & shadow-md
-                      msg.sender === 'user'
-                          ? 'bg-primary text-primary-foreground animate-slide-in-right' // Added animation
-                          : 'bg-secondary text-secondary-foreground animate-slide-in-left' // Added animation
-                      }`}
+                      className={cn(
+                        "max-w-[75%] rounded-lg p-3 shadow-md transition-all duration-300", // Added transition & shadow-md
+                        msg.sender === 'user'
+                            ? 'bg-primary text-primary-foreground animate-slide-in-right' // Added animation
+                            : 'bg-secondary text-secondary-foreground animate-slide-in-left' // Added animation
+                      )}
                   >
                       <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                       <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-secondary-foreground/70 text-left'}`}>
@@ -207,8 +219,13 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
           )}
           {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
               <div className="flex items-end gap-2 justify-start mb-6 animate-fade-in">
-                  <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'}`}>
-                      <AvatarFallback className={`${persona.isDreamScenario ? 'text-accent' : 'text-primary'}`}>
+                   <Avatar className={cn(
+                      "h-8 w-8 border self-start",
+                      persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'
+                    )}>
+                      <AvatarFallback className={cn(
+                         persona.isDreamScenario ? 'text-accent' : 'text-primary'
+                      )}>
                           {persona.isDreamScenario ? <Sparkles size={16} /> : <Bot size={16} />}
                       </AvatarFallback>
                   </Avatar>
