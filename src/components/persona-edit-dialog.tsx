@@ -32,7 +32,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import type { Persona } from "@/types/persona";
 // Note: Reusing createPersonaAction logic for simplicity. In a real app, you might have a dedicated update action.
-import { createPersonaAction, CreatePersonaInput } from "@/app/actions";
+import { createPersonaAction, type CreatePersonaInput } from "@/app/actions";
 
 
 const formSchema = z.object({
@@ -92,7 +92,7 @@ export function PersonaEditDialog({ isOpen, onClose, persona, onPersonaUpdated }
         const regeneratedDetails = await createPersonaAction(actionInput);
 
       const updatedPersona: Persona = {
-        ...persona, // Keep original ID and createdAt
+        ...persona, // Keep original ID, createdAt, isPublished, etc.
         name: values.name, // Use the user-edited name
         description: values.description, // Use the user-edited description
         // Use regenerated details from AI
