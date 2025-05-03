@@ -10,6 +10,10 @@ export default {
   ],
   theme: {
   	extend: {
+       fontFamily: { // Add font families
+         sans: ['var(--font-inter)', 'sans-serif'],
+         heading: ['var(--font-manrope)', 'sans-serif'],
+       },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -67,6 +71,18 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+       boxShadow: { // Added custom shadows for subtle depth
+         'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+         'DEFAULT': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+         'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+         'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+         'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+         '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+         'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+         'none': 'none',
+         // Custom subtle shadow from theme
+         'subtle': '0 4px 8px rgba(0, 0, 0, 0.04)',
+       },
   		keyframes: {
   			'accordion-down': {
   				from: {
@@ -100,15 +116,21 @@ export default {
              '0%': { transform: 'scale(0.9)', opacity: '0' },
              '80%': { transform: 'scale(1.02)', opacity: '1' },
              '100%': { transform: 'scale(1)', opacity: '1' },
-           }
+           },
+           'gradientBG': { // Background gradient animation keyframe
+              '0%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' },
+              '100%': { 'background-position': '0% 50%' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-in-out', // Added fade-in animation utility
-            'slide-in-left': 'slideInLeft 0.5s ease-out', // Added slide-in-left utility
-            'slide-in-right': 'slideInRight 0.5s ease-out', // Added slide-in-right utility
-            'pop-in': 'popIn 0.3s ease-out forwards', // Added pop-in animation utility
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-in-left': 'slideInLeft 0.5s ease-out',
+            'slide-in-right': 'slideInRight 0.5s ease-out',
+            'pop-in': 'popIn 0.3s ease-out forwards',
+            'gradient-bg': 'gradientBG 15s ease infinite', // Background gradient animation utility
   		}
   	}
   },

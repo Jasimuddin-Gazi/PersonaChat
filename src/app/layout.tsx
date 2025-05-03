@@ -1,18 +1,21 @@
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google'; // Import Inter and Manrope
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider'; // Import ThemeProvider
+import { ThemeProvider } from '@/components/theme-provider';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// Configure Inter font
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+// Configure Manrope font (for headings)
+const manrope = Manrope({
+  variable: '--font-manrope',
   subsets: ['latin'],
+  weight: ['600', '700', '800'], // Specify weights needed for headings
 });
 
 export const metadata: Metadata = {
@@ -26,16 +29,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Wrap children with ThemeProvider */}
+    // Remove suppressHydrationWarning if not strictly needed or if hydration issues are resolved
+    <html lang="en">
+      {/* Apply font variables */}
+      <body className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <main>{children}</main>
+          {/* Add the background animation class here */}
+          <main className="min-h-screen bg-gradient-animation">{children}</main>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { PlusCircle, Bot, Settings, Palette, MessageSquareText, CalendarClock, Sun, Moon } from "lucide-react"; // Added Sun/Moon icons
+import { PlusCircle, Bot, Settings, Palette, MessageSquareText, CalendarClock, Sun, Moon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { PersonaForm } from "@/components/persona-form";
@@ -32,7 +32,8 @@ import {
     DropdownMenuSubContent,
     DropdownMenuPortal
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes"; // Import useTheme hook
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils"; // Ensure cn is imported
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
 
@@ -41,20 +42,19 @@ export default function Home() {
   const [chatHistory, setChatHistory] = useLocalStorage<ChatHistory>("chatHistory", {});
   const [selectedPersonaId, setSelectedPersonaId] = React.useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = React.useState(false);
-  const [isCreatingPersona, setIsCreatingPersona] = React.useState(false); // State to control form visibility
-  const [isClientHydrated, setIsClientHydrated] = React.useState(false); // State for hydration
+  const [isCreatingPersona, setIsCreatingPersona] = React.useState(false);
+  const [isClientHydrated, setIsClientHydrated] = React.useState(false);
   const { toast } = useToast();
-  const { setTheme, theme } = useTheme(); // Get theme functions and current theme
+  const { setTheme, theme } = useTheme();
 
-  // Ensure client-side state is ready before rendering localStorage-dependent UI
   React.useEffect(() => {
     setIsClientHydrated(true);
   }, []);
 
   const handlePersonaCreated = (newPersona: Persona) => {
     setPersonas((prevPersonas) => [...prevPersonas, newPersona]);
-    setIsCreatingPersona(false); // Hide form after creation
-    setSelectedPersonaId(newPersona.id); // Select the newly created persona
+    setIsCreatingPersona(false);
+    setSelectedPersonaId(newPersona.id);
   };
 
   const handleDeletePersona = (idToDelete: string) => {
@@ -64,7 +64,6 @@ export default function Home() {
         delete newHistory[idToDelete];
         return newHistory;
      });
-     // If the deleted persona was selected, deselect it
      if (selectedPersonaId === idToDelete) {
         setSelectedPersonaId(null);
      }
@@ -74,7 +73,7 @@ export default function Home() {
    const handleClearChat = (personaId: string) => {
       setChatHistory((prev) => ({
         ...prev,
-        [personaId]: [] // Set messages for this persona to an empty array
+        [personaId]: []
       }));
       toast({ title: "Chat Cleared", description: `Chat history with the selected persona has been cleared.` });
   };
@@ -91,25 +90,29 @@ export default function Home() {
     };
 
     // Update chat history immediately with user message
-    setChatHistory((prev) => ({
-      ...prev,
-      [personaId]: [...(prev[personaId] || []), userMessage],
-    }));
+     // Use functional update for reliable state transitions
+     setChatHistory((prev) => {
+        const currentMessages = prev[personaId] || [];
+        return {
+            ...prev,
+            [personaId]: [...currentMessages, userMessage],
+        };
+    });
+
     setIsChatLoading(true);
 
     try {
-       // Prepare chat history string for the AI
        const historyString = (chatHistory[personaId] || [])
-         .slice(-10) // Limit history context
+         .slice(-10)
          .map(msg => `${msg.sender === 'user' ? 'User' : persona.name}: ${msg.text}`)
          .join('\n');
 
       const response = await getPersonaResponseAction({
         personaName: persona.name,
-        personaDescription: persona.description, // Use stored description
+        personaDescription: persona.description,
         userMessage: messageText,
         chatHistory: historyString,
-        isDreamScenario: persona.isDreamScenario, // Pass the flag
+        isDreamScenario: persona.isDreamScenario,
       });
 
       const personaMessage: ChatMessage = {
@@ -120,10 +123,17 @@ export default function Home() {
       };
 
        // Update chat history with persona message
-       setChatHistory((prev) => ({
-        ...prev,
-        [personaId]: [...(prev[personaId] || []), personaMessage],
-      }));
+       // Use functional update for reliable state transitions
+       setChatHistory((prev) => {
+            const currentMessages = prev[personaId] || [];
+            // Ensure user message is still present before adding persona message
+            const userMessageExists = currentMessages.some(msg => msg.id === userMessage.id);
+            const baseMessages = userMessageExists ? currentMessages : [...currentMessages, userMessage];
+            return {
+                ...prev,
+                [personaId]: [...baseMessages, personaMessage],
+            };
+        });
 
     } catch (error) {
        console.error("Error getting persona response:", error);
@@ -133,17 +143,22 @@ export default function Home() {
         variant: "destructive",
        });
        // Optionally remove the user's message if the AI failed
-       setChatHistory((prev) => ({
-           ...prev,
-           [personaId]: (prev[personaId] || []).filter(msg => msg.id !== userMessage.id)
-       }));
+        setChatHistory((prev) => {
+            const currentMessages = prev[personaId] || [];
+            return {
+                ...prev,
+                [personaId]: currentMessages.filter(msg => msg.id !== userMessage.id)
+            };
+        });
     } finally {
       setIsChatLoading(false);
     }
   };
 
   const selectedPersona = personas.find(p => p.id === selectedPersonaId) || null;
-  const currentMessages = chatHistory[selectedPersonaId ?? ''] || [];
+  // Ensure currentMessages reflects the latest state after updates
+  const currentMessages = React.useMemo(() => chatHistory[selectedPersonaId ?? ''] || [], [chatHistory, selectedPersonaId]);
+
 
   // Placeholder functions for new features
   const handleCustomizeChatSkin = () => {
@@ -157,10 +172,15 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-background text-foreground"> {/* Ensure root has background/foreground */}
-       <header className="border-b p-4 flex justify-between items-center bg-card text-card-foreground"> {/* Apply card styles */}
-         <h1 className="text-2xl font-semibold flex items-center gap-2"><Bot size={28}/> PersonaChat</h1>
-         {/* Settings Dropdown */}
+    <div className={cn(
+        "flex h-screen flex-col",
+         // Apply bg-gradient-animation conditionally or directly in layout
+         // If applying here, ensure parent elements allow for it.
+         // "bg-gradient-animation"
+         )}>
+       <header className="border-b p-4 flex justify-between items-center bg-card text-card-foreground shadow-sm"> {/* Applied card styles + shadow */}
+         {/* Apply heading font */}
+         <h1 className="text-2xl font-heading font-semibold flex items-center gap-2"><Bot size={28}/> PersonaChat</h1>
          <DropdownMenu>
              <DropdownMenuTrigger asChild>
                  <Button variant="ghost" size="icon">
@@ -171,7 +191,6 @@ export default function Home() {
              <DropdownMenuContent align="end">
                  <DropdownMenuLabel>Settings</DropdownMenuLabel>
                  <DropdownMenuSeparator />
-                  {/* Theme Toggle */}
                   <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                           {theme === 'light' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
@@ -211,27 +230,25 @@ export default function Home() {
         <ResizablePanelGroup
             direction="horizontal"
             className="flex-1 border-t"
-            // Prevent hydration error by setting initial size only after hydration
             style={{ opacity: isClientHydrated ? 1 : 0 }}
          >
-        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card"> {/* Apply card styles */}
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card shadow-md"> {/* Apply card styles + shadow */}
             <div className="p-4 space-y-4 border-b">
                  <Button
                     onClick={() => setIsCreatingPersona(!isCreatingPersona)}
-                    className="w-full transition-all duration-300 ease-in-out transform hover:scale-105" // Added animation
+                    className="w-full transition-all duration-300 ease-in-out transform hover:scale-105"
                     variant={isCreatingPersona ? "secondary" : "default"}
                     >
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {isCreatingPersona ? "Cancel Creation" : "Create New Persona"}
                 </Button>
                  {isCreatingPersona && (
-                    <div className="mt-4 animate-accordion-down"> {/* Added animation */}
+                    <div className="mt-4 animate-accordion-down">
                         <PersonaForm onPersonaCreated={handlePersonaCreated} />
                     </div>
                 )}
             </div>
             <Separator />
-             {/* Only render PersonaList after hydration to avoid mismatch */}
             {isClientHydrated ? (
               <PersonaList
                   personas={personas}
@@ -240,7 +257,6 @@ export default function Home() {
                   onDeletePersona={handleDeletePersona}
               />
             ) : (
-              // Render skeletons or a simple loading message before hydration
               <ScrollArea className="h-full flex-1">
                 <div className="space-y-4 p-4">
                   <Skeleton className="h-24 w-full rounded-lg" />
@@ -251,8 +267,8 @@ export default function Home() {
             )}
 
         </ResizablePanel>
-        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/10 active:bg-primary/20" /> {/* Handle animation */}
-        <ResizablePanel defaultSize={75} className="bg-background"> {/* Apply background style */}
+        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/10 active:bg-primary/20" />
+        <ResizablePanel defaultSize={75} className="bg-background">
            <ChatInterface
                 persona={selectedPersona}
                 messages={currentMessages}
