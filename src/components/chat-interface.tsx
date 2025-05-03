@@ -161,7 +161,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
         </div>
 
         {/* Chat Messages */}
-        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 space-y-6"> {/* Increased spacing */}
+        <ScrollArea ref={scrollAreaRef} className="flex-1 p-4"> {/* Removed space-y-6 */}
           {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                   <p>No messages yet. Start the conversation!</p>
@@ -170,7 +170,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
               messages.map((msg) => (
               <div
                   key={msg.id}
-                  className={`flex items-end gap-2 ${
+                  className={`flex items-end gap-2 mb-6 ${ // Added mb-6 for margin-bottom
                   msg.sender === 'user' ? 'justify-end' : 'justify-start'
                   }`}
               >
@@ -212,7 +212,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
           )}
           {/* Optional: Show typing indicator */}
           {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
-              <div className="flex items-end gap-2 justify-start">
+              <div className="flex items-end gap-2 justify-start mb-6"> {/* Added mb-6 */}
                   <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
                       <AvatarFallback>
                           {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
@@ -259,5 +259,3 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
     </TooltipProvider>
   );
 }
-
-
