@@ -1,13 +1,14 @@
+
 "use client";
 
 import * as React from "react";
-import { Bot, Trash2, Sparkles } from "lucide-react"; // Added Sparkles
+import { Bot, Trash2, Sparkles } from "lucide-react";
 import { formatDistanceToNow } from 'date-fns';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"; // Adjusted imports
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"; // Removed AvatarImage as it's unused
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,8 +20,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; // Added Tooltip
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Persona } from "@/types/persona";
+import { cn } from "@/lib/utils"; // Import cn utility
 
 type PersonaListProps = {
   personas: Persona[];
@@ -32,30 +34,32 @@ type PersonaListProps = {
 export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDeletePersona }: PersonaListProps) {
 
   const handleDeleteClick = (e: React.MouseEvent, personaId: string) => {
-    e.stopPropagation(); // Prevent card selection when clicking delete
+    e.stopPropagation();
     onDeletePersona(personaId);
   };
 
   return (
     <ScrollArea className="h-full flex-1">
-       <TooltipProvider> {/* Wrap list in TooltipProvider */}
+       <TooltipProvider>
           <div className="space-y-4 p-4">
             {personas.length === 0 && (
-              <p className="text-center text-muted-foreground">No personas created yet. Create one above!</p>
+              <p className="text-center text-muted-foreground animate-fade-in">No personas created yet. Create one above!</p> // Added animation
             )}
             {personas.map((persona) => (
               <Card
                 key={persona.id}
-                className={`cursor-pointer transition-colors hover:bg-muted/50 ${selectedPersonaId === persona.id ? 'border-primary ring-2 ring-primary' : ''}`}
+                className={cn(
+                  "cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary/50 persona-card", // Added persona-card class and hover effects
+                  selectedPersonaId === persona.id ? 'border-primary ring-2 ring-primary shadow-md' : 'border-border' // Simplified selection style
+                )}
                 onClick={() => onSelectPersona(persona.id)}
               >
                 <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
-                  {/* Avatar or Dream Scenario Icon */}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                       <Avatar className={`h-10 w-10 border ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
-                         <AvatarFallback>
-                           {persona.isDreamScenario ? <Sparkles size={20} className="text-yellow-500" /> : <Bot size={20} />}
+                       <Avatar className={`h-10 w-10 border transition-transform duration-300 hover:scale-110 ${persona.isDreamScenario ? 'bg-accent/20 border-accent' : 'border-primary'}`}> {/* Style tweaks */}
+                         <AvatarFallback className={`${persona.isDreamScenario ? 'text-accent' : 'text-primary'}`}>
+                           {persona.isDreamScenario ? <Sparkles size={20} /> : <Bot size={20} />}
                          </AvatarFallback>
                        </Avatar>
                     </TooltipTrigger>
@@ -67,9 +71,9 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                   </Tooltip>
 
                   <div className="grid gap-1 flex-1">
-                    <CardTitle>{persona.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                        {persona.isDreamScenario ? persona.skills : persona.greeting} {/* Show summary for dream, greeting for normal */}
+                    <CardTitle className="text-card-foreground">{persona.name}</CardTitle> {/* Ensure foreground color */}
+                    <CardDescription className="line-clamp-2 text-muted-foreground"> {/* Ensure muted foreground color */}
+                        {persona.isDreamScenario ? persona.skills : persona.greeting}
                     </CardDescription>
                   </div>
                    <AlertDialog>
@@ -77,8 +81,8 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                        <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={(e) => e.stopPropagation()} // Prevent card selection
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors" // Added transition
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete Persona</span>
@@ -103,7 +107,7 @@ export function PersonaList({ personas, selectedPersonaId, onSelectPersona, onDe
                   </AlertDialog>
                 </CardHeader>
                 <CardFooter className="text-xs text-muted-foreground pt-2">
-                  Created {formatDistanceToNow(persona.createdAt, { addSuffix: true })}
+                  Created {formatDistanceToNow(new Date(persona.createdAt), { addSuffix: true })} {/* Ensure Date object */}
                 </CardFooter>
               </Card>
             ))}

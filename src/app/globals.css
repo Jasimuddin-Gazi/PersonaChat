@@ -1,114 +1,164 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  @apply transition-colors duration-300 ease-in-out; /* Smooth theme transitions */
 }
 
 @layer base {
   :root {
-    /* Neutral Grays & Soft Blues Theme with Teal Accent */
-    --background: 220 20% 98%; /* Very light cool gray */
-    --foreground: 220 10% 20%; /* Dark cool gray */
+    /* Vibrant Teal & Cool Gray Theme */
+    --background: 210 20% 98%; /* Lighter cool gray */
+    --foreground: 210 10% 23%; /* Darker cool gray */
 
-    --card: 220 20% 100%; /* White */
-    --card-foreground: 220 10% 20%; /* Dark cool gray */
+    --card: 210 20% 100%; /* White */
+    --card-foreground: 210 10% 23%;
 
-    --popover: 220 20% 100%; /* White */
-    --popover-foreground: 220 10% 20%; /* Dark cool gray */
+    --popover: 210 20% 100%;
+    --popover-foreground: 210 10% 23%;
 
-    --primary: 220 10% 25%; /* Darker cool gray */
-    --primary-foreground: 210 40% 98%; /* Very light blue-gray */
+    --primary: 175 90% 35%; /* Vibrant Teal */
+    --primary-foreground: 180 100% 98%; /* Almost White for contrast */
 
-    --secondary: 210 40% 90%; /* Soft blue */
-    --secondary-foreground: 220 10% 25%; /* Darker cool gray */
+    --secondary: 210 15% 92%; /* Soft cool gray */
+    --secondary-foreground: 175 90% 25%; /* Darker Teal */
 
-    --muted: 220 15% 94%; /* Light cool gray */
-    --muted-foreground: 220 10% 45%; /* Medium cool gray */
+    --muted: 210 15% 96%; /* Very light gray */
+    --muted-foreground: 210 10% 45%; /* Medium gray */
 
-    --accent: 180 100% 25%; /* Teal (#008080) */
-    --accent-foreground: 210 40% 98%; /* Very light blue-gray (for contrast on teal) */
+    --accent: 210 80% 55%; /* Brighter Blue Accent */
+    --accent-foreground: 210 100% 98%; /* Almost White */
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 75% 55%; /* Slightly softer red */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 88%; /* Slightly darker light gray */
-    --input: 220 15% 90%; /* Light gray for inputs */
-    --ring: 180 100% 30%; /* Slightly darker Teal for focus rings */
+    --border: 210 15% 88%;
+    --input: 210 15% 94%; /* Slightly darker input */
+    --ring: 175 90% 40%; /* Teal for focus rings */
 
-    --chart-1: 180 80% 35%; /* Teal variations */
-    --chart-2: 210 50% 50%; /* Blue variations */
-    --chart-3: 220 10% 50%; /* Gray variations */
-    --chart-4: 180 60% 45%;
-    --chart-5: 210 70% 60%;
+    --chart-1: 175 75% 40%; /* Teal variations */
+    --chart-2: 210 70% 60%; /* Blue variations */
+    --chart-3: 210 10% 55%; /* Gray variations */
+    --chart-4: 175 60% 50%;
+    --chart-5: 210 50% 70%;
 
     --radius: 0.5rem;
 
-    /* Sidebar uses primary/secondary/accent from above, adjusted if needed */
-    --sidebar-background: 220 10% 15%; /* Very dark cool gray */
-    --sidebar-foreground: 210 20% 80%; /* Light cool gray/blue text */
-    --sidebar-primary: 180 100% 25%; /* Teal */
-    --sidebar-primary-foreground: 210 40% 98%; /* White/Light blue */
-    --sidebar-accent: 220 10% 25%; /* Darker gray for hover/active */
-    --sidebar-accent-foreground: 210 40% 98%; /* White/Light blue */
-    --sidebar-border: 220 10% 30%; /* Slightly lighter dark gray */
-    --sidebar-ring: 180 100% 30%; /* Teal */
+    /* Sidebar uses primary/secondary/accent from above */
+    --sidebar-background: 210 10% 18%; /* Dark cool gray */
+    --sidebar-foreground: 210 15% 85%; /* Lighter gray text */
+    --sidebar-primary: 175 90% 38%; /* Teal */
+    --sidebar-primary-foreground: 180 100% 98%; /* White */
+    --sidebar-accent: 210 10% 25%; /* Darker gray hover */
+    --sidebar-accent-foreground: 180 100% 98%; /* White */
+    --sidebar-border: 210 10% 30%;
+    --sidebar-ring: 175 90% 40%; /* Teal */
   }
 
   .dark {
-    /* Dark Theme: Inverted Grays & Blues with Teal Accent */
-    --background: 220 10% 10%; /* Very dark cool gray */
-    --foreground: 210 20% 90%; /* Light cool gray/blue */
+    /* Dark Theme: Deep Indigo & Vibrant Cyan Accent */
+    --background: 225 15% 12%; /* Deep indigo/dark blue */
+    --foreground: 210 20% 92%; /* Light cool gray */
 
-    --card: 220 10% 15%; /* Dark cool gray */
-    --card-foreground: 210 20% 90%; /* Light cool gray/blue */
+    --card: 225 15% 18%; /* Darker indigo */
+    --card-foreground: 210 20% 92%;
 
-    --popover: 220 10% 12%; /* Slightly darker cool gray */
-    --popover-foreground: 210 20% 90%; /* Light cool gray/blue */
+    --popover: 225 15% 15%; /* Even darker */
+    --popover-foreground: 210 20% 92%;
 
-    --primary: 210 30% 85%; /* Lighter soft blue */
-    --primary-foreground: 220 10% 15%; /* Dark cool gray */
+    --primary: 180 90% 45%; /* Vibrant Cyan */
+    --primary-foreground: 180 100% 10%; /* Very Dark Cyan/Black */
 
-    --secondary: 220 10% 25%; /* Medium-dark cool gray */
-    --secondary-foreground: 210 30% 85%; /* Lighter soft blue */
+    --secondary: 225 10% 25%; /* Medium dark indigo */
+    --secondary-foreground: 180 80% 75%; /* Lighter Cyan */
 
-    --muted: 220 10% 20%; /* Darker cool gray */
-    --muted-foreground: 220 10% 60%; /* Medium-light cool gray */
+    --muted: 225 10% 20%; /* Darker indigo */
+    --muted-foreground: 210 15% 65%; /* Medium gray */
 
-    --accent: 180 100% 35%; /* Brighter Teal for dark mode */
-    --accent-foreground: 220 10% 10%; /* Very dark cool gray */
+    --accent: 260 80% 65%; /* Electric Purple Accent */
+    --accent-foreground: 260 100% 98%; /* Almost White */
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 70% 60%; /* Slightly brighter red */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 10% 25%; /* Medium-dark cool gray */
-    --input: 220 10% 22%; /* Slightly darker gray for inputs */
-    --ring: 180 100% 40%; /* Brighter Teal for focus rings */
+    --border: 225 10% 28%; /* Slightly lighter border */
+    --input: 225 10% 22%;
+    --ring: 180 90% 50%; /* Cyan for focus rings */
 
-    --chart-1: 180 80% 45%; /* Teal variations */
-    --chart-2: 210 50% 60%; /* Blue variations */
-    --chart-3: 220 10% 60%; /* Gray variations */
-    --chart-4: 180 60% 55%;
-    --chart-5: 210 70% 70%;
+    --chart-1: 180 75% 50%; /* Cyan variations */
+    --chart-2: 260 70% 70%; /* Purple variations */
+    --chart-3: 210 10% 60%; /* Gray variations */
+    --chart-4: 180 60% 60%;
+    --chart-5: 260 50% 80%;
 
-    /* Sidebar Dark uses primary/secondary/accent from above */
-    --sidebar-background: 220 10% 5%; /* Almost black */
-    --sidebar-foreground: 210 20% 70%; /* Medium gray/blue text */
-    --sidebar-primary: 180 100% 35%; /* Teal */
-    --sidebar-primary-foreground: 220 10% 10%; /* Very dark gray */
-    --sidebar-accent: 220 10% 15%; /* Dark gray for hover/active */
-    --sidebar-accent-foreground: 210 30% 85%; /* Lighter blue */
-    --sidebar-border: 220 10% 20%; /* Darker gray */
-    --sidebar-ring: 180 100% 40%; /* Teal */
+    /* Sidebar Dark */
+    --sidebar-background: 225 15% 8%; /* Very dark indigo */
+    --sidebar-foreground: 210 15% 75%; /* Medium gray */
+    --sidebar-primary: 180 90% 48%; /* Cyan */
+    --sidebar-primary-foreground: 180 100% 10%; /* Dark Cyan */
+    --sidebar-accent: 225 10% 15%; /* Darker hover */
+    --sidebar-accent-foreground: 180 80% 80%; /* Lighter cyan */
+    --sidebar-border: 225 10% 20%;
+    --sidebar-ring: 180 90% 50%; /* Cyan */
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-200; /* Subtle border transition */
   }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Add subtle animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+  }
+   .animate-slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+  }
+   .animate-pop-in {
+      animation: popIn 0.3s ease-out forwards;
+    }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+   @keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    80% { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slideInLeft {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+   @keyframes slideInRight {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+}
+
+/* Apply animations to components */
+.persona-card {
+  @apply animate-fade-in;
+}
+.chat-message {
+    @apply animate-pop-in; /* Apply pop-in animation */
+}
+.chat-message.user-message {
+    /* Optional: specific animation for user */
+}
+.chat-message.persona-message {
+     /* Optional: specific animation for persona */
 }

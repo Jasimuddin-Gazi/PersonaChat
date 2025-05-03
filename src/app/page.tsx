@@ -1,7 +1,8 @@
+
 "use client";
 
 import * as React from "react";
-import { PlusCircle, Bot, Settings, Palette, MessageSquareText, CalendarClock } from "lucide-react"; // Added new icons
+import { PlusCircle, Bot, Settings, Palette, MessageSquareText, CalendarClock, Sun, Moon } from "lucide-react"; // Added Sun/Moon icons
 
 import { Button } from "@/components/ui/button";
 import { PersonaForm } from "@/components/persona-form";
@@ -26,8 +27,12 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // Added Dropdown
-
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuPortal
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "next-themes"; // Import useTheme hook
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
 
@@ -39,6 +44,7 @@ export default function Home() {
   const [isCreatingPersona, setIsCreatingPersona] = React.useState(false); // State to control form visibility
   const [isClientHydrated, setIsClientHydrated] = React.useState(false); // State for hydration
   const { toast } = useToast();
+  const { setTheme, theme } = useTheme(); // Get theme functions and current theme
 
   // Ensure client-side state is ready before rendering localStorage-dependent UI
   React.useEffect(() => {
@@ -151,8 +157,8 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
-       <header className="border-b p-4 flex justify-between items-center">
+    <div className="flex h-screen flex-col bg-background text-foreground"> {/* Ensure root has background/foreground */}
+       <header className="border-b p-4 flex justify-between items-center bg-card text-card-foreground"> {/* Apply card styles */}
          <h1 className="text-2xl font-semibold flex items-center gap-2"><Bot size={28}/> PersonaChat</h1>
          {/* Settings Dropdown */}
          <DropdownMenu>
@@ -163,21 +169,42 @@ export default function Home() {
                  </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
-                 <DropdownMenuLabel>Features</DropdownMenuLabel>
+                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
                  <DropdownMenuSeparator />
-                 <DropdownMenuItem onClick={handleCustomizeChatSkin}>
+                  {/* Theme Toggle */}
+                  <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                          {theme === 'light' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                          <span>Theme</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                              <DropdownMenuItem onClick={() => setTheme('light')}>
+                                  <Sun className="mr-2 h-4 w-4" /> Light
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                                  <Moon className="mr-2 h-4 w-4" /> Dark
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setTheme('system')}>
+                                   <Settings className="mr-2 h-4 w-4" /> System
+                              </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                 <DropdownMenuSeparator />
+                 <DropdownMenuLabel>Features (Coming Soon)</DropdownMenuLabel>
+                 <DropdownMenuItem onClick={handleCustomizeChatSkin} disabled>
                      <Palette className="mr-2 h-4 w-4" />
-                     <span>Chat Skins (Soon)</span>
+                     <span>Chat Skins</span>
                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleAIScheduler}>
+                  <DropdownMenuItem onClick={handleAIScheduler} disabled>
                      <CalendarClock className="mr-2 h-4 w-4" />
-                     <span>AI Scheduler (Soon)</span>
+                     <span>AI Scheduler</span>
                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleContextAssistant}>
+                  <DropdownMenuItem onClick={handleContextAssistant} disabled>
                      <MessageSquareText className="mr-2 h-4 w-4" />
-                     <span>AI Assistant (Soon)</span>
+                     <span>AI Assistant</span>
                  </DropdownMenuItem>
-                 {/* Add more feature placeholders here */}
              </DropdownMenuContent>
          </DropdownMenu>
        </header>
@@ -187,18 +214,18 @@ export default function Home() {
             // Prevent hydration error by setting initial size only after hydration
             style={{ opacity: isClientHydrated ? 1 : 0 }}
          >
-        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full">
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full bg-card"> {/* Apply card styles */}
             <div className="p-4 space-y-4 border-b">
                  <Button
                     onClick={() => setIsCreatingPersona(!isCreatingPersona)}
-                    className="w-full"
+                    className="w-full transition-all duration-300 ease-in-out transform hover:scale-105" // Added animation
                     variant={isCreatingPersona ? "secondary" : "default"}
                     >
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {isCreatingPersona ? "Cancel Creation" : "Create New Persona"}
                 </Button>
                  {isCreatingPersona && (
-                    <div className="mt-4">
+                    <div className="mt-4 animate-accordion-down"> {/* Added animation */}
                         <PersonaForm onPersonaCreated={handlePersonaCreated} />
                     </div>
                 )}
@@ -224,8 +251,8 @@ export default function Home() {
             )}
 
         </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={75}>
+        <ResizableHandle withHandle className="transition-colors duration-200 hover:bg-primary/10 active:bg-primary/20" /> {/* Handle animation */}
+        <ResizablePanel defaultSize={75} className="bg-background"> {/* Apply background style */}
            <ChatInterface
                 persona={selectedPersona}
                 messages={currentMessages}
