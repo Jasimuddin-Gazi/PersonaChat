@@ -18,6 +18,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { getPersonaResponseAction } from "@/app/actions";
 import type { Persona } from "@/types/persona";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
 
@@ -27,7 +28,13 @@ export default function Home() {
   const [selectedPersonaId, setSelectedPersonaId] = React.useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = React.useState(false);
   const [isCreatingPersona, setIsCreatingPersona] = React.useState(false); // State to control form visibility
+  const [isClientHydrated, setIsClientHydrated] = React.useState(false); // State for hydration
   const { toast } = useToast();
+
+  // Ensure client-side state is ready before rendering localStorage-dependent UI
+  React.useEffect(() => {
+    setIsClientHydrated(true);
+  }, []);
 
   const handlePersonaCreated = (newPersona: Persona) => {
     setPersonas((prevPersonas) => [...prevPersonas, newPersona]);
@@ -148,12 +155,24 @@ export default function Home() {
                 )}
             </div>
             <Separator />
-            <PersonaList
-                personas={personas}
-                selectedPersonaId={selectedPersonaId}
-                onSelectPersona={setSelectedPersonaId}
-                onDeletePersona={handleDeletePersona}
-            />
+             {/* Only render PersonaList after hydration to avoid mismatch */}
+            {isClientHydrated ? (
+              <PersonaList
+                  personas={personas}
+                  selectedPersonaId={selectedPersonaId}
+                  onSelectPersona={setSelectedPersonaId}
+                  onDeletePersona={handleDeletePersona}
+              />
+            ) : (
+              // Render skeletons or a simple loading message before hydration
+              <ScrollArea className="h-full flex-1">
+                <div className="space-y-4 p-4">
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                  <Skeleton className="h-24 w-full rounded-lg" />
+                </div>
+              </ScrollArea>
+            )}
 
         </ResizablePanel>
         <ResizableHandle withHandle />
