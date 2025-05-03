@@ -5,9 +5,9 @@ import { personaResponse as personaResponseFlow, PersonaResponseInput, PersonaRe
 import type { Persona } from "@/types/persona";
 
 /**
- * Creates a new AI persona using the createPersonaFlow.
- * @param input - The input containing the persona description.
- * @returns The details of the created persona.
+ * Creates a new AI persona or Dream Scenario using the createPersonaFlow.
+ * @param input - The input containing the description and type (standard/dream).
+ * @returns The details of the created persona/scenario.
  * @throws Will throw an error if the AI flow fails.
  */
 export async function createPersonaAction(input: CreatePersonaInput): Promise<CreatePersonaOutput> {
@@ -18,7 +18,8 @@ export async function createPersonaAction(input: CreatePersonaInput): Promise<Cr
     if (!result?.personaName || !result?.personaGreeting || !result?.personaTone || !result?.personaSkills) {
       throw new Error("AI failed to generate complete persona details.");
     }
-    return result;
+    // Ensure the output flag matches the input for consistency client-side
+    return { ...result, isDreamScenario: !!input.isDreamScenario };
   } catch (error) {
     console.error("Error in createPersonaAction:", error);
     // Consider more specific error handling or logging
@@ -27,9 +28,9 @@ export async function createPersonaAction(input: CreatePersonaInput): Promise<Cr
 }
 
 /**
- * Generates a response from an AI persona using the personaResponseFlow.
- * @param input - The input containing persona details, user message, and chat history.
- * @returns The AI persona's response.
+ * Generates a response from an AI persona or Dream Scenario using the personaResponseFlow.
+ * @param input - The input containing persona/scenario details, user message, and chat history.
+ * @returns The AI's response.
  * @throws Will throw an error if the AI flow fails.
  */
 export async function getPersonaResponseAction(input: PersonaResponseInput): Promise<PersonaResponseOutput> {

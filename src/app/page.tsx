@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { PlusCircle, Bot } from "lucide-react";
+import { PlusCircle, Bot, Settings, Palette, MessageSquareText, CalendarClock } from "lucide-react"; // Added new icons
 
 import { Button } from "@/components/ui/button";
 import { PersonaForm } from "@/components/persona-form";
@@ -18,7 +18,16 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { getPersonaResponseAction } from "@/app/actions";
 import type { Persona } from "@/types/persona";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"; // Added Dropdown
+
 
 type ChatHistory = Record<string, ChatMessage[]>; // personaId -> messages
 
@@ -94,6 +103,7 @@ export default function Home() {
         personaDescription: persona.description, // Use stored description
         userMessage: messageText,
         chatHistory: historyString,
+        isDreamScenario: persona.isDreamScenario, // Pass the flag
       });
 
       const personaMessage: ChatMessage = {
@@ -129,14 +139,53 @@ export default function Home() {
   const selectedPersona = personas.find(p => p.id === selectedPersonaId) || null;
   const currentMessages = chatHistory[selectedPersonaId ?? ''] || [];
 
+  // Placeholder functions for new features
+  const handleCustomizeChatSkin = () => {
+      toast({ title: "Coming Soon!", description: "Personalized Chat Skins are under development." });
+  }
+  const handleAIScheduler = () => {
+      toast({ title: "Coming Soon!", description: "AI Meeting Scheduler integration is planned." });
+  }
+  const handleContextAssistant = () => {
+      toast({ title: "Coming Soon!", description: "Context-Aware AI Assistant features are in the pipeline." });
+  }
+
   return (
     <div className="flex h-screen flex-col">
-       <header className="border-b p-4">
+       <header className="border-b p-4 flex justify-between items-center">
          <h1 className="text-2xl font-semibold flex items-center gap-2"><Bot size={28}/> PersonaChat</h1>
+         {/* Settings Dropdown */}
+         <DropdownMenu>
+             <DropdownMenuTrigger asChild>
+                 <Button variant="ghost" size="icon">
+                     <Settings className="h-5 w-5" />
+                     <span className="sr-only">Settings & Features</span>
+                 </Button>
+             </DropdownMenuTrigger>
+             <DropdownMenuContent align="end">
+                 <DropdownMenuLabel>Features</DropdownMenuLabel>
+                 <DropdownMenuSeparator />
+                 <DropdownMenuItem onClick={handleCustomizeChatSkin}>
+                     <Palette className="mr-2 h-4 w-4" />
+                     <span>Chat Skins (Soon)</span>
+                 </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleAIScheduler}>
+                     <CalendarClock className="mr-2 h-4 w-4" />
+                     <span>AI Scheduler (Soon)</span>
+                 </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleContextAssistant}>
+                     <MessageSquareText className="mr-2 h-4 w-4" />
+                     <span>AI Assistant (Soon)</span>
+                 </DropdownMenuItem>
+                 {/* Add more feature placeholders here */}
+             </DropdownMenuContent>
+         </DropdownMenu>
        </header>
         <ResizablePanelGroup
             direction="horizontal"
             className="flex-1 border-t"
+            // Prevent hydration error by setting initial size only after hydration
+            style={{ opacity: isClientHydrated ? 1 : 0 }}
          >
         <ResizablePanel defaultSize={25} minSize={20} maxSize={40} className="flex flex-col h-full">
             <div className="p-4 space-y-4 border-b">

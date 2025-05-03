@@ -6,4 +6,6 @@ export interface Persona {
   tone: string;
   skills: string;
   createdAt: Date;
+  isDreamScenario?: boolean; // Flag for Dream Chat Mode
 }
+

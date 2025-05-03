@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Send, Loader2, Bot, User, Trash2 } from "lucide-react";
+import { Send, Loader2, Bot, User, Trash2, Sparkles } from "lucide-react"; // Added Sparkles
 import { format } from 'date-fns';
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; // Added Tooltip
 
 
 export interface ChatMessage {
@@ -105,42 +106,59 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
 
   return (
     <div className="flex h-full flex-col">
-      {/* Chat Header */}
-       <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-3">
-           <Avatar className="h-10 w-10 border">
-                <AvatarFallback><Bot size={20} /></AvatarFallback>
-           </Avatar>
-           <div>
-             <h2 className="text-lg font-semibold">{persona.name}</h2>
-             <p className="text-sm text-muted-foreground line-clamp-1">{persona.greeting}</p>
-           </div>
+      <TooltipProvider> {/* Ensure TooltipProvider wraps the header */}
+        {/* Chat Header */}
+         <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-3">
+             {/* Avatar or Dream Scenario Icon */}
+             <Tooltip>
+               <TooltipTrigger asChild>
+                 <Avatar className={`h-10 w-10 border ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
+                   <AvatarFallback>
+                     {persona.isDreamScenario ? <Sparkles size={20} className="text-yellow-500" /> : <Bot size={20} />}
+                   </AvatarFallback>
+                 </Avatar>
+               </TooltipTrigger>
+               {persona.isDreamScenario && (
+                 <TooltipContent>
+                   <p>Dream Scenario</p>
+                 </TooltipContent>
+               )}
+             </Tooltip>
+             <div>
+               <h2 className="text-lg font-semibold">{persona.name}</h2>
+               {/* Show skills summary for dream, greeting for normal */}
+               <p className="text-sm text-muted-foreground line-clamp-1">
+                 {persona.isDreamScenario ? persona.skills : persona.greeting}
+               </p>
+             </div>
+          </div>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Clear Chat</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear chat history?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete all messages in the chat with "{persona.name}". This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => onClearChat(persona.id)}>
+                  Clear Chat
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-              <Trash2 className="h-4 w-4" />
-              <span className="sr-only">Clear Chat</span>
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Clear chat history?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete all messages in the chat with "{persona.name}". This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                onClick={() => onClearChat(persona.id)}>
-                Clear Chat
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+      </TooltipProvider>
 
       {/* Chat Messages */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 space-y-4">
@@ -157,9 +175,20 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                 }`}
             >
                 {msg.sender === 'persona' && (
-                    <Avatar className="h-8 w-8 border self-start">
-                    <AvatarFallback><Bot size={16} /></AvatarFallback>
-                    </Avatar>
+                     <Tooltip>
+                         <TooltipTrigger asChild>
+                             <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
+                                <AvatarFallback>
+                                    {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
+                                </AvatarFallback>
+                             </Avatar>
+                         </TooltipTrigger>
+                         {persona.isDreamScenario && (
+                             <TooltipContent side="right">
+                                 <p>Scenario Response</p>
+                             </TooltipContent>
+                         )}
+                     </Tooltip>
                 )}
                 <div
                     className={`max-w-[75%] rounded-lg p-3 shadow-sm ${
@@ -170,7 +199,7 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
                 >
                     <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                     <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-primary-foreground/70 text-right' : 'text-secondary-foreground/70 text-left'}`}>
-                        {format(msg.timestamp, 'p')}
+                        {format(new Date(msg.timestamp), 'p')} {/* Ensure timestamp is Date object */}
                     </p>
                 </div>
                  {msg.sender === 'user' && (
@@ -184,8 +213,10 @@ export function ChatInterface({ persona, messages, onSendMessage, isLoading, onC
          {/* Optional: Show typing indicator */}
          {isLoading && messages.length > 0 && messages[messages.length - 1].sender === 'user' && (
             <div className="flex items-end gap-2 justify-start">
-                 <Avatar className="h-8 w-8 border self-start">
-                    <AvatarFallback><Bot size={16} /></AvatarFallback>
+                 <Avatar className={`h-8 w-8 border self-start ${persona.isDreamScenario ? 'bg-yellow-100 dark:bg-yellow-900' : ''}`}>
+                    <AvatarFallback>
+                        {persona.isDreamScenario ? <Sparkles size={16} className="text-yellow-500" /> : <Bot size={16} />}
+                    </AvatarFallback>
                  </Avatar>
                  <div className="max-w-[75%] rounded-lg p-3 shadow-sm bg-secondary text-secondary-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
